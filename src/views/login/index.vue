@@ -8,15 +8,15 @@
         <h5 class="sub-title">V1.0.0</h5>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="userName">
         <span class="svg-container">
           <svg-icon icon-class="user"/>
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
+          ref="userName"
+          v-model="loginForm.userName"
           placeholder="用户名"
-          name="username"
+          name="userName"
           type="text"
           tabindex="1"
           autocomplete="on"
@@ -77,11 +77,11 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
+        userName: 'admin',
         password: '111111'
       },
       loginRules: {
-        username: [{required: true, trigger: 'blur', validator: validateUsername}],
+        userName: [{required: true, trigger: 'blur', validator: validateUsername}],
         password: [{required: true, trigger: 'blur', validator: validatePassword}]
       },
       passwordType: 'password',
@@ -108,8 +108,8 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
+    if (this.loginForm.userName === '') {
+      this.$refs.userName.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }

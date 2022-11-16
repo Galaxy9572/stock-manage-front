@@ -1,5 +1,5 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import {getToken, setToken, removeToken, setUserId} from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
@@ -13,6 +13,9 @@ const state = {
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_USERID: (state, userId) => {
+    state.userId = userId
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
@@ -31,12 +34,14 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { userName, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ userName: userName.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
+        commit('SET_USERID', data.id)
         setToken(data.token)
+        setUserId(data.id)
         resolve()
       }).catch(error => {
         reject(error)
@@ -47,7 +52,7 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      getInfo(state.userId).then(response => {
         const { data } = response
 
         if (!data) {
@@ -60,11 +65,10 @@ const actions = {
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
-
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
+        commit('SET_AVATAR', "")
+        commit('SET_INTRODUCTION', "introduction")
         resolve(data)
       }).catch(error => {
         reject(error)
