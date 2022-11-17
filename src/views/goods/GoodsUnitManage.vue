@@ -1,42 +1,39 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="单位名称" style="width: 200px;" class="filter-item" @keyup.enter.native="doSearch" />
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="doSearch">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="doSearch">
+      <el-input v-model="listQuery.unitName" placeholder="单位名称" style="width: 200px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+      <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" @sort-change="sortChange" width="100%">
-      <el-table-column label="单位名称" prop="unitName" sortable="custom" align="center" min-width="20%" :class-name="getSortClass('id')">
+    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
+      <el-table-column label="单位名称" prop="unitName" align="center" min-width="20%">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <span>{{ row.unitName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建人" min-width="15%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.createUserId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" min-width="15%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.updateUserId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
@@ -44,7 +41,7 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row.id)">
             删除
           </el-button>
         </template>
@@ -73,7 +70,7 @@
 
 <script>
 import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
-import { listGoodsUnit } from '@/api/goods'
+import { listGoodsUnit,deleteGoodsUnit } from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -97,8 +94,6 @@ export default {
         unitName: undefined,
         sort: '+createTime'
       },
-      sortOptions: [{ label: '升序', key: '+createTime' }, { label: '降序', key: '-createTime' }],
-      showReviewer: false,
       temp: {
         id: undefined,
         unitName: "",
@@ -116,9 +111,7 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        //type: [{ required: true, message: 'type is required', trigger: 'change' }],
       },
       downloadLoading: false
     }
@@ -137,6 +130,8 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
+      }).catch(error => {
+        this.listLoading = false
       })
     },
     doSearch() {
@@ -149,20 +144,6 @@ export default {
         type: 'success'
       })
       row.status = status
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.doSearch()
     },
     resetTemp() {
       this.temp = {
@@ -228,14 +209,12 @@ export default {
         }
       })
     },
-    handleDelete(row, index) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
+    handleDelete(id) {
+      deleteGoodsUnit(id).then(response => {
+        listGoodsUnit(this.listQuery)
+      }).catch(error => {
+        this.listLoading = false
       })
-      this.list.splice(index, 1)
     },
     handleFetchPv(pv) {
       fetchPv(pv).then(response => {
@@ -251,10 +230,6 @@ export default {
           return v[j]
         }
       }))
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }

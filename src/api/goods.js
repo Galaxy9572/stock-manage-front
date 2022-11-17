@@ -2,16 +2,23 @@ import request from '@/utils/request'
 
 export function addModifyGoodsUnit(req) {
   return request({
-    url: '/goods/unit',
+    url: '/api/goods/unit',
     method: 'post',
-    params: req
+    req
   })
 }
 
-export function listGoodsUnit(req) {
+export function listGoodsUnit(data) {
   return request({
-    url: '/goods/unit/list',
+    url: '/api/goods/unit/list',
     method: 'post',
-    params: req
+    data
+  })
+}
+
+export function deleteGoodsUnit(data) {
+  return request({
+    url: '/api/goods/unit/' + data,
+    method: 'delete'
   })
 }
