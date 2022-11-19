@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function addModifyGoodsUnit(req) {
+export function addModifyGoodsUnit(data) {
   return request({
     url: '/api/goods/unit',
     method: 'post',
-    req
+    data
   })
 }
 
