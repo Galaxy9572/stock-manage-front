@@ -22,3 +22,26 @@ export function deleteGoodsUnit(data) {
     method: 'delete'
   })
 }
+
+export function addModifyGoodsType(data) {
+  return request({
+    url: '/api/goods/type',
+    method: 'post',
+    data
+  })
+}
+
+export function listGoodsTypes(data) {
+  return request({
+    url: '/api/goods/type/list',
+    method: 'get',
+    data
+  })
+}
+
+export function deleteGoodsType(data) {
+  return request({
+    url: '/api/goods/type/' + data,
+    method: 'delete'
+  })
+}
