@@ -1,47 +1,61 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.unitName" placeholder="单位名称" style="width: 200px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+      <el-input v-model="listQuery.goodsName" placeholder="商品名称" style="width: 300px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+      <el-cascader class="filter-item" style="margin-right: 20px"
+        placeholder="请选择商品类型"
+        ref="goodsTypeCascader"
+        :key="id"
+        v-model="listQuery.goodsTypeId"
+        clearable
+        :options="goodsTypes"
+        :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover' }"
+        @change="handleGoodsTypeChange"
+        @focus="listGoodsTypes">
+      </el-cascader>
+      <el-select class="filter-item" clearable v-load style="margin-right: 20px" v-model="value" filterable placeholder="请选择商品单位">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateDialog">
+      <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
         新增
       </el-button>
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="单位名称" prop="unitName" align="center" min-width="20%">
+      <el-table-column label="商品名称" prop="goodsName" align="center" min-width="20%">
         <template slot-scope="{row}">
-          <span>{{ row.unitName }}</span>
+          <span>{{ row.goodsName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" min-width="20%" align="center">
+      <el-table-column label="商品类型" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.goodsType.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" min-width="20%" align="center">
+      <el-table-column label="单位" min-width="15%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.goodsUnit.unitName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" min-width="15%" align="center">
+      <el-table-column label="备注" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createUserId }}</span>
+          <span>{{ row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改人" min-width="15%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updateUserId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="15%" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
+          <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
+            详情
           </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row.id)">
+          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(row.id)">
             删除
           </el-button>
         </template>
@@ -52,8 +66,8 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="单位名称" prop="unitName">
-          <el-input v-model="temp.unitName" />
+        <el-form-item label="商品名称" prop="goodsName">
+          <el-input v-model="temp.goodsName" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -69,14 +83,17 @@
 </template>
 
 <script>
-import { fetchPv, updateArticle } from '@/api/article'
-import {listGoodsUnit, deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
+import {
+  listGoodsInfo,
+  addModifyGoodsInfo,
+  deleteGoodsInfo, listGoodsTypes
+} from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
-  name: 'GoodsUnitManage',
+  name: 'GoodsInfoManage',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -86,21 +103,22 @@ export default {
     return {
       tableKey: 0,
       list: null,
+      goodsTypes: [],
       total: 0,
       listLoading: true,
       listQuery: {
         pageNo: 1,
         pageSize: 20,
-        unitName: undefined,
-        sort: '+createTime'
+        goodsTypeId: null,
+        goodsUnitId: null,
+        goodsName: ""
       },
       temp: {
-        id: undefined,
-        unitName: "",
-        createTime: undefined,
-        updateTime: undefined,
-        createUser: "",
-        updateUser: ""
+        id: null,
+        goodsTypeId: null,
+        goodsUnitId: null,
+        goodsName: "",
+        memo: ""
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -111,7 +129,9 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        unitName: [{ required: true, message: '单位不能为空', trigger: 'change' }],
+        goodsName: [{ required: true, message: '商品名称不能为空', trigger: 'change' }],
+        goodsTypeId: [{ required: true, message: '商品类型不能为空', trigger: 'change' }],
+        goodsUnitId: [{ required: true, message: '商品单位不能为空', trigger: 'change' }],
       },
       downloadLoading: false
     }
@@ -123,12 +143,18 @@ export default {
     // 获取商品单位列表
     getList() {
       this.listLoading = true
-      listGoodsUnit(this.listQuery).then(response => {
+      listGoodsInfo(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
       }).catch(error => {
         this.listLoading = false
+        this.$notify({
+          title: '提醒',
+          message: error.message,
+          type: 'error',
+          duration: 3000
+        })
       })
     },
     doSearch() {
@@ -144,12 +170,11 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        unitName: "",
-        createTime: undefined,
-        updateTime: undefined,
-        createUser: "",
-        updateUser: ""
+        id: null,
+        goodsTypeId: null,
+        goodsUnitId: null,
+        goodsName: "",
+        memo: ""
       }
     },
     // 打开新增面板
@@ -165,7 +190,7 @@ export default {
     createGoodsUnit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addModifyGoodsUnit(this.temp).then(() => {
+          addModifyGoodsInfo(this.temp).then(() => {
             this.dialogFormVisible = false
             this.getList()
             this.$notify({
@@ -198,7 +223,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           console.log(tempData)
-          addModifyGoodsUnit(tempData).then(() => {
+          addModifyGoodsInfo(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '提醒',
@@ -219,7 +244,7 @@ export default {
       })
     },
     handleDelete(id) {
-      deleteGoodsUnit(id).then(response => {
+      deleteGoodsInfo(id).then(response => {
         this.$notify({
           title: '提醒',
           message: '操作成功',
@@ -244,7 +269,30 @@ export default {
           return v[j]
         }
       }))
-    }
+    },
+    handleGoodsTypeChange(value) {
+      this.listQuery.goodsTypeId = value[value.length - 1]
+    },
+    listGoodsTypes() {
+      listGoodsTypes().then(response => {
+        this.goodsTypes = this.getTreeData(response.data);
+        console.log(this.goodsTypes)
+      }).catch(error => {
+      })
+    },
+    getTreeData(data) {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].children.length < 1) {
+          // children若为空数组，则将children设为undefined
+          data[i].children = undefined;
+        } else {
+          // children若不为空数组，则继续 递归调用 本方法
+          this.getTreeData(data[i].children);
+        }
+      }
+      return data;
+    },
+
   }
 }
 </script>
