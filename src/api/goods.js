@@ -31,11 +31,10 @@ export function addModifyGoodsType(data) {
   })
 }
 
-export function listGoodsTypes(data) {
+export function listGoodsTypes() {
   return request({
     url: '/api/goods/type/list',
-    method: 'get',
-    data
+    method: 'get'
   })
 }
 

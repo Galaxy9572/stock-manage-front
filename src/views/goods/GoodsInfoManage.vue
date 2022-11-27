@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
-      <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateDialog">
         新增
       </el-button>
     </div>
@@ -38,10 +38,10 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(row.id)">
+          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row.id)">
             删除
           </el-button>
         </template>

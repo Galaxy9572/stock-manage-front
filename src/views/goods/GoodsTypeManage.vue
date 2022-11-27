@@ -1,5 +1,10 @@
 <template>
   <div class="app-container">
+    <div class="filter-container" style="width: 60%; margin: 0 auto">
+      <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateMainDialog">
+        新增大类
+      </el-button>
+    </div>
     <el-table
       :data="list"
       style="width: 60%; margin: 0 auto"
@@ -20,15 +25,10 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="30%" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateDialog">
-            新增大类
-          </el-button>
-        </template>
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="success" size="mini" icon="el-icon-plus" @click="openCreateSubDialog(row.id)">
             新增子类型
           </el-button>
         </template>
@@ -36,16 +36,17 @@
     </el-table>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
+               style="width: 400px; margin-left:50px;">
         <el-form-item label="类型名称" prop="typeName">
-          <el-input v-model="temp.typeName" />
+          <el-input v-model="temp.typeName"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+        <el-button type="primary" @click="dialogStatus==='createMain' || dialogStatus=== 'createSub'?createGoodsType():updateData()">
           确认
         </el-button>
       </div>
@@ -66,26 +67,23 @@ export default {
     return {
       list: null,
       listLoading: true,
-      listQuery: {
-      },
+      listQuery: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
-        create: '新建'
+        createMain: '新增大类',
+        createSub: '新增子类型'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        typeName: [{ required: true, message: '类型名称不能为空', trigger: 'change' }],
+        typeName: [{required: true, message: '类型名称不能为空', trigger: 'change'}],
       },
       temp: {
-        id: undefined,
+        id: null,
+        parentTypeId: null,
         typeName: "",
-        createTime: undefined,
-        updateTime: undefined,
-        createUser: "",
-        updateUser: ""
       },
     }
   },
@@ -96,11 +94,37 @@ export default {
     getList() {
       this.listLoading = true
       listGoodsTypes().then(response => {
-        console.log(response)
         this.list = response.data
         this.listLoading = false
       }).catch(error => {
         this.listLoading = false
+      })
+    },
+    resetTemp() {
+      this.temp = {
+        id: null,
+        parentTypeId: null,
+        typeName: ""
+      }
+    },
+    // 打开新增面板
+    openCreateMainDialog() {
+      this.resetTemp()
+      this.dialogStatus = 'createMain'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    openCreateSubDialog(parentTypeId) {
+      this.temp = {
+        parentTypeId: parentTypeId,
+        typeName: ""
+      }
+      this.dialogStatus = 'createSub'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
       })
     },
     // 发送新增请求
@@ -128,7 +152,10 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp = {
+        id: row.id,
+        typeName: row.typeName
+      }
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

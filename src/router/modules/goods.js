@@ -13,12 +13,21 @@ const goodsRouter = {
   },
   children: [
     {
+      path: 'goods-info',
+      component: () => import('@/views/goods/GoodsInfoManage'),
+      name: '商品信息管理',
+      meta: {
+        title: '商品信息管理',
+        roles: ['admin']
+      }
+    },
+    {
       path: 'goods-type',
       component: () => import('@/views/goods/GoodsTypeManage'),
       name: '商品类型管理',
       meta: {
         title: '商品类型管理',
-        roles: ['admin'] // or you can only set roles in sub nav
+        roles: ['admin']
       }
     },
     {
@@ -27,7 +36,7 @@ const goodsRouter = {
       name: '商品计量单位管理',
       meta: {
         title: '商品计量单位管理',
-        roles: ['admin'] // or you can only set roles in sub nav
+        roles: ['admin']
       }
     },
   ]

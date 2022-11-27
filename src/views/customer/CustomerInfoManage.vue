@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateDialog">
+      <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
         新增
       </el-button>
     </div>
@@ -33,11 +33,11 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
           </el-button>
-          <el-popconfirm title="确定要删除吗" @onConfirm="handleDelete(row.id)">
-            <el-button slot="reference" size="mini" type="danger">
+          <el-popconfirm style="margin-left: 10px" title="确定要删除吗" @onConfirm="handleDelete(row.id)">
+            <el-button slot="reference" size="mini" icon="el-icon-delete" type="danger">
               删除
             </el-button>
           </el-popconfirm>
