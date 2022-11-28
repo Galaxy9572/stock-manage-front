@@ -30,7 +30,7 @@
       </el-table-column>
       <el-table-column label="角色" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.roles }}</span>
+            <span v-for="(role) in row.roles"><el-tag>{{roleMap[role]}}</el-tag></span>
         </template>
       </el-table-column>
       <el-table-column label="备注" min-width="20%" align="center">
@@ -61,19 +61,39 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
-               style="width: 400px; margin-left:50px;">
+               style="width: 400px; margin:0 auto;">
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="temp.userName"/>
         </el-form-item>
+        <el-form-item label="角色" prop="roles">
+          <el-select clearable style="margin-right: 20px" v-model="temp.roles" multiple
+                     collapse-tags filterable placeholder="请选择角色">
+            <el-option
+              v-for="item in allUserRoles"
+              :key="item.code"
+              :label="item.desc"
+              :value="item.code">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="temp.password"/>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input v-model="temp.confirmPassword"/>
+        </el-form-item>
+        <el-form-item label="备注" prop="memo">
+          <el-input v-model="temp.memo"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='create'?addUser():updateData()">
+            确认
+          </el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
-          确认
-        </el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -83,7 +103,7 @@ import {deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
-import {listAllUserRoles, listUserInfo} from "@/api/user"; // secondary package based on el-pagination
+import {addUserInfo, listAllUserRoles, listUserInfo} from "@/api/user"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',
@@ -91,6 +111,13 @@ export default {
   directives: {waves},
   filters: {},
   data() {
+    let validatePassword = (rule, value, callback) => {
+      if(this.dialogStatus === 'create'){
+
+      }
+      console.log("temp.password: " + this.temp.password)
+      console.log("temp.confirmPassword: " + this.temp.confirmPassword)
+    }
     return {
       tableKey: 0,
       list: null,
@@ -108,20 +135,26 @@ export default {
         userName: "",
         roles: [],
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        memo: "",
+        avatarUrl: ""
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
-        create: '新建'
+        create: '创建用户'
       },
-      dialogPvVisible: false,
-      pvData: [],
+      roleMap: {
+        admin: '管理员',
+        user: '普通用户'
+      },
       rules: {
-        unitName: [{required: true, message: '单位不能为空', trigger: 'change'}],
-      },
-      downloadLoading: false
+        userName: [{required: true, message: '用户名不能为空', trigger: 'blur'}],
+        roles: [{required: true, message: '角色不能为空', trigger: 'blur'}],
+        password: [{required: true, message: '密码不能为空', trigger: 'blur', validator: validatePassword}],
+        confirmPassword: [{required: true, message: '确认密码不能为空', trigger: 'blur'}],
+      }
     }
   },
   created() {
@@ -131,15 +164,9 @@ export default {
   methods: {
     // 获取所有角色
     getAllUserRoles() {
-      listAllUserRoles().then(response => {
+      listAllUserRoles(this.listQuery).then(response => {
         this.allUserRoles = response.data
       }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     // 获取用户列表
@@ -184,10 +211,10 @@ export default {
       })
     },
     // 发送新增请求
-    createGoodsUnit() {
+    addUser() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addModifyGoodsUnit(this.temp).then(() => {
+          addUserInfo(this.temp).then(() => {
             this.dialogFormVisible = false
             this.getList()
             this.$notify({
@@ -197,12 +224,6 @@ export default {
               duration: 3000
             })
           }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -229,13 +250,6 @@ export default {
               duration: 3000
             })
             this.getList()
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -249,13 +263,6 @@ export default {
           duration: 3000
         })
         this.getList()
-      }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     formatJson(filterVal) {

@@ -1,5 +1,21 @@
 import request from '@/utils/request'
 
+export function addUserInfo(data) {
+  return request({
+    url: '/api/user/info',
+    method: 'put',
+    data
+  })
+}
+
+export function updateUserInfo(data) {
+  return request({
+    url: '/api/user/info',
+    method: 'post',
+    data
+  })
+}
+
 export function listUserInfo(data) {
   return request({
     url: '/api/user/info/list',
