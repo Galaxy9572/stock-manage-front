@@ -1,19 +1,29 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.unitName" placeholder="单位名称" style="width: 200px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+      <el-input v-model="listQuery.unitName" placeholder="用户名" style="width: 200px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="openCreateDialog">
+      <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
         新增
       </el-button>
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="单位名称" prop="unitName" align="center" min-width="20%">
+      <el-table-column label="用户名" prop="userName" align="center" min-width="20%">
         <template slot-scope="{row}">
-          <span>{{ row.unitName }}</span>
+          <span>{{ row.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="角色" min-width="20%" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.roles }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" min-width="20%" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.memo }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" min-width="20%" align="center">
@@ -21,27 +31,12 @@
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" min-width="20%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建人" min-width="15%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.createUserId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="修改人" min-width="15%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updateUserId }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row.id)">
+          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(row.id)">
             删除
           </el-button>
         </template>
@@ -69,11 +64,11 @@
 </template>
 
 <script>
-import { fetchPv, updateArticle } from '@/api/article'
 import {listGoodsUnit, deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
+import {listUserInfo} from "@/api/user"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',
@@ -91,8 +86,8 @@ export default {
       listQuery: {
         pageNo: 1,
         pageSize: 20,
-        unitName: undefined,
-        sort: '+createTime'
+        userName: "",
+        roles: []
       },
       temp: {
         id: undefined,
@@ -123,7 +118,7 @@ export default {
     // 获取商品单位列表
     getList() {
       this.listLoading = true
-      listGoodsUnit(this.listQuery).then(response => {
+      listUserInfo(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false

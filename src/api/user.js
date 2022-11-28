@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+export function listUserInfo(data) {
+  return request({
+    url: '/api/user/info/list',
+    method: 'post',
+    data
+  })
+}
+
 export function login(data) {
   return request({
     url: '/api/user/info/login',

@@ -80,19 +80,19 @@
         <el-form-item label="区域">
           <el-col :span="6">
             <el-form-item prop="country">
-              <el-input v-model="temp.country" />
+              <el-input v-model="temp.country" placeholder="国家" />
             </el-form-item>
           </el-col>
           <el-col class="line" :span="3">-</el-col>
           <el-col :span="6">
             <el-form-item prop="state">
-              <el-input v-model="temp.state" />
+              <el-input v-model="temp.state"  placeholder="省、自治区、州" />
             </el-form-item>
           </el-col>
           <el-col class="line" :span="3">-</el-col>
           <el-col :span="6">
             <el-form-item prop="city">
-              <el-input v-model="temp.city" />
+              <el-input v-model="temp.city"  placeholder="城市" />
             </el-form-item>
           </el-col>
         </el-form-item>
