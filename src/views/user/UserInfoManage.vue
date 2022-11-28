@@ -1,16 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.unitName" placeholder="用户名" style="width: 200px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
-      <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
+      <el-input v-model="listQuery.userName" placeholder="用户名" style="width: 200px; margin-right: 20px"
+                class="filter-item" @keyup.enter.native="doSearch"/>
+      <el-select class="filter-item" clearable style="margin-right: 20px" v-model="listQuery.roles" multiple
+                 collapse-tags filterable placeholder="请选择角色">
+        <el-option
+          v-for="item in allUserRoles"
+          :key="item.code"
+          :label="item.desc"
+          :value="item.code">
+        </el-option>
+      </el-select>
+      <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search"
+                 @click="doSearch">
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
-        新增
+        创建用户
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
+    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
+              width="100%">
       <el-table-column label="用户名" prop="userName" align="center" min-width="20%">
         <template slot-scope="{row}">
           <span>{{ row.userName }}</span>
@@ -36,19 +48,22 @@
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(row.id)">
+          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger"
+                     @click="handleDelete(row.id)">
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize"
+                @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="单位名称" prop="unitName">
-          <el-input v-model="temp.unitName" />
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="temp.userName"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -64,23 +79,22 @@
 </template>
 
 <script>
-import {listGoodsUnit, deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
+import {deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
-import {listUserInfo} from "@/api/user"; // secondary package based on el-pagination
+import {listAllUserRoles, listUserInfo} from "@/api/user"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',
-  components: { Pagination },
-  directives: { waves },
-  filters: {
-
-  },
+  components: {Pagination},
+  directives: {waves},
+  filters: {},
   data() {
     return {
       tableKey: 0,
       list: null,
+      allUserRoles: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -90,12 +104,11 @@ export default {
         roles: []
       },
       temp: {
-        id: undefined,
-        unitName: "",
-        createTime: undefined,
-        updateTime: undefined,
-        createUser: "",
-        updateUser: ""
+        id: null,
+        userName: "",
+        roles: [],
+        password: "",
+        confirmPassword: ""
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -106,16 +119,30 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        unitName: [{ required: true, message: '单位不能为空', trigger: 'change' }],
+        unitName: [{required: true, message: '单位不能为空', trigger: 'change'}],
       },
       downloadLoading: false
     }
   },
   created() {
     this.getList()
+    this.getAllUserRoles()
   },
   methods: {
-    // 获取商品单位列表
+    // 获取所有角色
+    getAllUserRoles() {
+      listAllUserRoles().then(response => {
+        this.allUserRoles = response.data
+      }).catch(error => {
+        this.$notify({
+          title: '提醒',
+          message: error.message,
+          type: 'error',
+          duration: 3000
+        })
+      })
+    },
+    // 获取用户列表
     getList() {
       this.listLoading = true
       listUserInfo(this.listQuery).then(response => {

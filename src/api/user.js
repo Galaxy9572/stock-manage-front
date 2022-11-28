@@ -23,6 +23,13 @@ export function getInfo(userId) {
   })
 }
 
+export function listAllUserRoles() {
+  return request({
+    url: '/api/user/role/all',
+    method: 'get'
+  })
+}
+
 export function logout() {
   return request({
     url: '/vue-element-admin/user/logout',
