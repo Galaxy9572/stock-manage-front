@@ -15,6 +15,7 @@ import goodsRouter from "@/router/modules/goods";
 import customerRouter from "@/router/modules/customer";
 import userRouter from "@/router/modules/user";
 import orderRouter from "@/router/modules/order";
+import supplierRouter from "@/router/modules/supplier";
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -137,6 +138,7 @@ export const asyncRoutes = [
   goodsRouter,
   orderRouter,
   customerRouter,
+  supplierRouter,
   userRouter,
   // {
   //   path: '/permission',

@@ -13,9 +13,27 @@ const orderRouter = {
     {
       path: 'order-record',
       component: () => import('@/views/order/OrderRecordManage'),
-      name: '订单记录管理',
+      name: '发货管理',
       meta: {
-        title: '订单记录管理',
+        title: '发货管理',
+        roles: ['admin']
+      }
+    },
+    {
+      path: 'order-record',
+      component: () => import('@/views/order/OrderRecordManage'),
+      name: '进货管理',
+      meta: {
+        title: '进货管理',
+        roles: ['admin']
+      }
+    },
+    {
+      path: 'order-record',
+      component: () => import('@/views/order/OrderRecordManage'),
+      name: '订单历史记录管理',
+      meta: {
+        title: '订单历史记录管理',
         roles: ['admin']
       }
     }
