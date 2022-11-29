@@ -30,7 +30,7 @@
       </el-table-column>
       <el-table-column label="角色" min-width="20%" align="center">
         <template slot-scope="{row}">
-            <span v-for="(role) in row.roles"><el-tag>{{roleMap[role]}}</el-tag></span>
+          <span><el-tag v-for="(role) in row.roles">{{ roleMap[role] }}</el-tag></span>
         </template>
       </el-table-column>
       <el-table-column label="备注" min-width="20%" align="center">
@@ -103,7 +103,7 @@ import {deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
-import {addUserInfo, listAllUserRoles, listUserInfo} from "@/api/user"; // secondary package based on el-pagination
+import {addUserInfo, deleteUserInfo, listAllUserRoles, listUserInfo, updateUserInfo} from "@/api/user"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',
@@ -112,11 +112,33 @@ export default {
   filters: {},
   data() {
     let validatePassword = (rule, value, callback) => {
-      if(this.dialogStatus === 'create'){
-
+      if (this.dialogStatus === 'create') {
+        if (this.temp.password === undefined || this.temp.password === '' || this.temp.password.trim() === '') {
+          callback(new Error('密码不能为空'))
+        }
+        if (this.temp.confirmPassword === undefined || this.temp.confirmPassword === '' || this.temp.confirmPassword.trim() === '') {
+          callback(new Error('确认密码不能为空'))
+        }
+        if (this.temp.password !== this.temp.confirmPassword) {
+          callback(new Error('两次密码输入不一致'))
+        } else {
+          callback()
+        }
       }
-      console.log("temp.password: " + this.temp.password)
-      console.log("temp.confirmPassword: " + this.temp.confirmPassword)
+      if (this.dialogStatus === 'update') {
+        let isPasswordEmpty = this.temp.password === undefined || this.temp.password === '' || this.temp.password.trim() === '';
+        let isConfirmPasswordEmpty = this.temp.confirmPassword === undefined || this.temp.confirmPassword === '' || this.temp.confirmPassword.trim() === '';
+        console.log(isPasswordEmpty, isConfirmPasswordEmpty)
+        if (!(isPasswordEmpty && isConfirmPasswordEmpty)) {
+          if (this.temp.password !== this.temp.confirmPassword) {
+            callback(new Error('两次密码输入不一致'))
+          } else {
+            callback()
+          }
+        } else {
+          callback()
+        }
+      }
     }
     return {
       tableKey: 0,
@@ -152,8 +174,8 @@ export default {
       rules: {
         userName: [{required: true, message: '用户名不能为空', trigger: 'blur'}],
         roles: [{required: true, message: '角色不能为空', trigger: 'blur'}],
-        password: [{required: true, message: '密码不能为空', trigger: 'blur', validator: validatePassword}],
-        confirmPassword: [{required: true, message: '确认密码不能为空', trigger: 'blur'}],
+        password: [{required: true, trigger: 'blur', validator: validatePassword}],
+        confirmPassword: [{required: true, trigger: 'blur', validator: validatePassword}],
       }
     }
   },
@@ -240,8 +262,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          console.log(tempData)
-          addModifyGoodsUnit(tempData).then(() => {
+          updateUserInfo(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '提醒',
@@ -255,7 +276,7 @@ export default {
       })
     },
     handleDelete(id) {
-      deleteGoodsUnit(id).then(response => {
+      deleteUserInfo(id).then(response => {
         this.$notify({
           title: '提醒',
           message: '操作成功',

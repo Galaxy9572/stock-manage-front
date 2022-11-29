@@ -16,6 +16,13 @@ export function updateUserInfo(data) {
   })
 }
 
+export function deleteUserInfo(data) {
+  return request({
+    url: '/api/user/info/' + data,
+    method: 'delete'
+  })
+}
+
 export function listUserInfo(data) {
   return request({
     url: '/api/user/info/list',
