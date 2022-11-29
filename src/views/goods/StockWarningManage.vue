@@ -30,42 +30,27 @@
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="商品名称" fixed prop="goodsName" align="center" min-width="15%">
+      <el-table-column label="商品名称" prop="goodsName" align="center" min-width="20%">
         <template slot-scope="{row}">
           <span>{{ row.goodsName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="商品类型" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span><el-tag>{{ row.goodsType.typeName }}</el-tag></span>
+          <span>{{ row.goodsType.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="10%" align="center">
+      <el-table-column label="单位" min-width="15%" align="center">
         <template slot-scope="{row}">
-          <span><el-tag>{{ row.goodsUnit.unitName }}</el-tag></span>
+          <span>{{ row.goodsUnit.unitName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进货价" prop="purchasePrice" align="center" min-width="15%">
-        <template slot-scope="{row}">
-          <span>{{ row.purchasePrice }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="零售价" prop="retailPrice" min-width="15%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.retailPrice }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="批发价" prop="wholesalePrice" min-width="15%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.wholesalePrice }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" min-width="15%" align="center" show-overflow-tooltip="true">
+      <el-table-column label="备注" min-width="20%" align="center">
         <template slot-scope="{row}">
           <span>{{ row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" align="center" min-width="15%" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="15%" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
@@ -133,9 +118,6 @@ export default {
         goodsTypeId: null,
         goodsUnitId: null,
         goodsName: "",
-        purchasePrice: 0.00,
-        retailPrice: 0.00,
-        wholesalePrice: 0.00,
         memo: ""
       },
       dialogFormVisible: false,

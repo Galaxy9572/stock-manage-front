@@ -60,7 +60,7 @@
                 @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
+      <el-form ref="dataForm" :rules="addUserRules" :model="temp" label-position="left" label-width="80px"
                style="width: 400px; margin:0 auto;">
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="temp.userName"/>
@@ -95,11 +95,47 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :rules="updateUserRules" :model="temp" label-position="left" label-width="80px"
+               style="width: 400px; margin:0 auto;">
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="temp.userName"/>
+        </el-form-item>
+        <el-form-item label="角色" prop="roles">
+          <el-select clearable style="margin-right: 20px" v-model="temp.roles" multiple
+                     collapse-tags filterable placeholder="请选择角色">
+            <el-option
+              v-for="item in allUserRoles"
+              :key="item.code"
+              :label="item.desc"
+              :value="item.code">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" v-model="temp.password" placeholder="不修改密码请留空"/>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input type="password" v-model="temp.confirmPassword" placeholder="不修改密码请留空"/>
+        </el-form-item>
+        <el-form-item label="备注" prop="memo">
+          <el-input v-model="temp.memo"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='create'?addUser():updateData()">
+            确认
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
@@ -164,18 +200,24 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑',
-        create: '创建用户'
+        update: '修改用户信息',
+        create: '创建用户信息'
       },
       roleMap: {
         admin: '管理员',
         user: '普通用户'
       },
-      rules: {
+      addUserRules: {
         userName: [{required: true, message: '用户名不能为空', trigger: 'blur'}],
         roles: [{required: true, message: '角色不能为空', trigger: 'blur'}],
         password: [{required: true, trigger: 'blur', validator: validatePassword}],
         confirmPassword: [{required: true, trigger: 'blur', validator: validatePassword}],
+      },
+      updateUserRules: {
+        userName: [{required: true, message: '用户名不能为空', trigger: 'blur'}],
+        roles: [{required: false, message: '角色不能为空', trigger: 'blur'}],
+        password: [{required: false, trigger: 'blur', validator: validatePassword}],
+        confirmPassword: [{required: false, trigger: 'blur', validator: validatePassword}],
       }
     }
   },

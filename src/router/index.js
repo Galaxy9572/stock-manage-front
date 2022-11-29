@@ -14,6 +14,7 @@ import nestedRouter from './modules/nested'
 import goodsRouter from "@/router/modules/goods";
 import customerRouter from "@/router/modules/customer";
 import userRouter from "@/router/modules/user";
+import orderRouter from "@/router/modules/order";
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -134,6 +135,7 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   goodsRouter,
+  orderRouter,
   customerRouter,
   userRouter,
   // {
