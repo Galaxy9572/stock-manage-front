@@ -16,6 +16,11 @@
           <span>{{ row.unitName }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="是否允许小数" prop="unitName" align="center" min-width="20%">
+        <template slot-scope="{row}">
+          <span><el-tag>{{ booleanMap[row.allowDecimal] }}</el-tag></span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" min-width="20%" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -51,29 +56,35 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin:0 auto;">
         <el-form-item label="单位名称" prop="unitName">
           <el-input v-model="temp.unitName" />
         </el-form-item>
+        <el-form-item  label="是否允许小数" prop="allowDecimal">
+          <el-switch
+            v-model="temp.allowDecimal"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+            确认
+          </el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
-          确认
-        </el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchPv, updateArticle } from '@/api/article'
 import {listGoodsUnit, deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
-import waves from '@/directive/waves' // waves directive
+import waves from '@/directive/waves'
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'GoodsUnitManage',
@@ -91,12 +102,12 @@ export default {
       listQuery: {
         pageNo: 1,
         pageSize: 20,
-        unitName: undefined,
-        sort: '+createTime'
+        unitName: undefined
       },
       temp: {
         id: undefined,
         unitName: "",
+        allowDecimal: null,
         createTime: undefined,
         updateTime: undefined,
         createUser: "",
@@ -104,6 +115,10 @@ export default {
       },
       dialogFormVisible: false,
       dialogStatus: '',
+      booleanMap: {
+        true: '是',
+        false: '否'
+      },
       textMap: {
         update: '编辑',
         create: '新建'
@@ -174,13 +189,6 @@ export default {
               type: 'success',
               duration: 3000
             })
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -207,13 +215,6 @@ export default {
               duration: 3000
             })
             this.getList()
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -227,13 +228,6 @@ export default {
           duration: 3000
         })
         this.getList()
-      }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     formatJson(filterVal) {

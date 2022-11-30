@@ -14,13 +14,13 @@
                    @change="handleGoodsTypeChange"
                    @focus="listGoodsTypes">
       </el-cascader>
-      <el-select class="filter-item" clearable v-load style="margin-right: 20px" v-model="value" filterable
+      <el-select class="filter-item" clearable v-load style="margin-right: 20px" v-model="listQuery.goodsUnitId" filterable
                  placeholder="请选择商品单位">
         <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in goodsUnits"
+          :key="item.id"
+          :label="item.unitName"
+          :value="item.id">
         </el-option>
       </el-select>
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search"
@@ -28,7 +28,7 @@
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
-        新增
+        新增商品
       </el-button>
     </div>
 
@@ -100,8 +100,7 @@
                        clearable
                        :options="goodsTypes"
                        :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover'}"
-                       @change="handleGoodsTypeChange"
-                       @focus="listGoodsTypes">
+                       @change="handleGoodsTypeChange">
           </el-cascader>
         </el-form-item>
         <el-form-item label="商品单位" prop="goodsTypeId">
@@ -115,19 +114,19 @@
           </el-select>
         </el-form-item>
         <el-form-item label="进货价" prop="purchasePrice">
-          <el-input v-model="temp.purchasePrice"/>
+          <el-input type="number" min="0" v-model="temp.purchasePrice" @input="limitInput($event, 'purchasePrice')"/>
         </el-form-item>
         <el-form-item label="零售价" prop="retailPrice">
-          <el-input v-model="temp.retailPrice"/>
+          <el-input type="number" min="0" v-model="temp.retailPrice" @input="limitInput($event, 'retailPrice')"/>
         </el-form-item>
         <el-form-item label="批发价" prop="wholesalePrice">
-          <el-input v-model="temp.wholesalePrice"/>
+          <el-input type="number" min="0" v-model="temp.wholesalePrice" @input="limitInput($event, 'wholesalePrice')"/>
         </el-form-item>
         <el-form-item>
           <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
-          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+          <el-button type="primary" @click="dialogStatus==='create'?addModifyGoodsUnit():updateData()">
             确认
           </el-button>
         </el-form-item>
@@ -142,9 +141,9 @@ import {
   addModifyGoodsInfo,
   deleteGoodsInfo, listGoodsTypes, listGoodsUnit
 } from '@/api/goods'
-import waves from '@/directive/waves' // waves directive
+import waves from '@/directive/waves'
 import {parseTime} from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'GoodsInfoManage',
@@ -157,6 +156,7 @@ export default {
       list: null,
       goodsTypes: [],
       goodsUnits: [],
+      goodsTypeIdArr: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -185,15 +185,19 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        goodsName: [{required: true, message: '商品名称不能为空', trigger: 'change'}],
-        goodsTypeId: [{required: true, message: '商品类型不能为空', trigger: 'change'}],
-        goodsUnitId: [{required: true, message: '商品单位不能为空', trigger: 'change'}],
+        goodsName: [{required: true, message: '商品名称不能为空', trigger: 'blur'}],
+        goodsTypeId: [{required: true, message: '商品类型不能为空', trigger: 'blur'}],
+        goodsUnitId: [{required: true, message: '商品单位不能为空', trigger: 'blur'}],
+        purchasePrice: [{required: true, message: '进货价不能为空', trigger: 'blur'}],
+        retailPrice: [{required: true, message: '零售价不能为空', trigger: 'blur'}],
+        wholesalePrice: [{required: false, message: '商品单位不能为空', trigger: 'blur'}],
       },
       downloadLoading: false
     }
   },
   created() {
     this.getList()
+    this.listGoodsTypes()
     this.getGoodsUnitList()
   },
   methods: {
@@ -204,14 +208,6 @@ export default {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
-      }).catch(error => {
-        this.listLoading = false
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     // 获取商品信息列表
@@ -237,6 +233,9 @@ export default {
         goodsTypeId: null,
         goodsUnitId: null,
         goodsName: "",
+        purchasePrice: 0.00,
+        retailPrice: 0.00,
+        wholesalePrice: 0.00,
         memo: ""
       }
     },
@@ -250,7 +249,7 @@ export default {
       })
     },
     // 发送新增请求
-    createGoodsUnit() {
+    addModifyGoodsUnit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           addModifyGoodsInfo(this.temp).then(() => {
@@ -260,13 +259,6 @@ export default {
               title: '提醒',
               message: '操作成功',
               type: 'success',
-              duration: 3000
-            })
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
               duration: 3000
             })
           })
@@ -295,13 +287,6 @@ export default {
               duration: 3000
             })
             this.getList()
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -315,13 +300,6 @@ export default {
           duration: 3000
         })
         this.getList()
-      }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     formatJson(filterVal) {
@@ -335,6 +313,7 @@ export default {
     },
     handleGoodsTypeChange(value) {
       this.listQuery.goodsTypeId = value[value.length - 1]
+      this.temp.goodsTypeId = value[value.length - 1]
     },
     listGoodsTypes() {
       listGoodsTypes().then(response => {
@@ -355,7 +334,21 @@ export default {
       }
       return data;
     },
-
+    //限制保留两个小数
+    //限制只能输入两位小数
+    limitInput(value, name) {
+      // 第一步：转成字符串
+      this.$refs.dataForm[name] = ('' + value)
+        // 第二步：把不是数字，不是小数点的过滤掉
+        .replace(/[^\d\\^.]+/g, '')
+        // 第三步：第一位0开头，0后面为数字，则过滤掉，取后面的数字
+        .replace(/^0+(\d)/, '$1')
+        // 第四步：如果输入的第一位为小数点，则替换成 0. 实现自动补全
+        .replace(/^\./, '0.')
+      // 第五步：最终匹配得到结果 以数字开头，只有一个小数点，	而且小数点后面只能有0到2位小数
+      .match(/^\d*(\.?\d{0,2})/g)[0] || ''
+      this.temp[name] = this.$refs.dataForm[name]
+    }
   }
 }
 </script>
