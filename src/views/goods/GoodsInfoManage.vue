@@ -1,19 +1,21 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.goodsName" placeholder="商品名称" style="width: 300px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+      <el-input v-model="listQuery.goodsName" placeholder="商品名称" style="width: 300px; margin-right: 20px"
+                class="filter-item" @keyup.enter.native="doSearch"/>
       <el-cascader class="filter-item" style="margin-right: 20px"
-        placeholder="请选择商品类型"
-        ref="goodsTypeCascader"
-        :key="id"
-        v-model="listQuery.goodsTypeId"
-        clearable
-        :options="goodsTypes"
-        :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover' }"
-        @change="handleGoodsTypeChange"
-        @focus="listGoodsTypes">
+                   placeholder="请选择商品类型"
+                   ref="goodsTypeCascader"
+                   :key="id"
+                   v-model="listQuery.goodsTypeId"
+                   clearable
+                   :options="goodsTypes"
+                   :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover' }"
+                   @change="handleGoodsTypeChange"
+                   @focus="listGoodsTypes">
       </el-cascader>
-      <el-select class="filter-item" clearable v-load style="margin-right: 20px" v-model="value" filterable placeholder="请选择商品单位">
+      <el-select class="filter-item" clearable v-load style="margin-right: 20px" v-model="value" filterable
+                 placeholder="请选择商品单位">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -21,7 +23,8 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
+      <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search"
+                 @click="doSearch">
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
@@ -29,7 +32,8 @@
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
+    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
+              width="100%">
       <el-table-column label="商品名称" fixed prop="goodsName" align="center" min-width="15%">
         <template slot-scope="{row}">
           <span>{{ row.goodsName }}</span>
@@ -70,29 +74,64 @@
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
           </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(row.id)">
+          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger"
+                     @click="handleDelete(row.id)">
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize"
+                @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
+               style="width: 400px; margin: 0 auto">
         <el-form-item label="商品名称" prop="goodsName">
-          <el-input v-model="temp.goodsName" />
+          <el-input v-model="temp.goodsName"/>
+        </el-form-item>
+        <el-form-item label="商品类型" prop="goodsTypeId">
+          <el-cascader style="margin-right: 20px"
+                       placeholder="请选择商品类型"
+                       ref="goodsTypeCascader"
+                       :key="id"
+                       v-model="temp.goodsTypeId"
+                       clearable
+                       :options="goodsTypes"
+                       :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover'}"
+                       @change="handleGoodsTypeChange"
+                       @focus="listGoodsTypes">
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="商品单位" prop="goodsTypeId">
+          <el-select v-model="temp.goodsUnitId" placeholder="请选择商品单位">
+            <el-option
+              v-for="item in goodsUnits"
+              :key="item.id"
+              :label="item.unitName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="进货价" prop="purchasePrice">
+          <el-input v-model="temp.purchasePrice"/>
+        </el-form-item>
+        <el-form-item label="零售价" prop="retailPrice">
+          <el-input v-model="temp.retailPrice"/>
+        </el-form-item>
+        <el-form-item label="批发价" prop="wholesalePrice">
+          <el-input v-model="temp.wholesalePrice"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+            确认
+          </el-button>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
-          确认
-        </el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -101,24 +140,23 @@
 import {
   listGoodsInfo,
   addModifyGoodsInfo,
-  deleteGoodsInfo, listGoodsTypes
+  deleteGoodsInfo, listGoodsTypes, listGoodsUnit
 } from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
   name: 'GoodsInfoManage',
-  components: { Pagination },
-  directives: { waves },
-  filters: {
-
-  },
+  components: {Pagination},
+  directives: {waves},
+  filters: {},
   data() {
     return {
       tableKey: 0,
       list: null,
       goodsTypes: [],
+      goodsUnits: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -147,18 +185,19 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        goodsName: [{ required: true, message: '商品名称不能为空', trigger: 'change' }],
-        goodsTypeId: [{ required: true, message: '商品类型不能为空', trigger: 'change' }],
-        goodsUnitId: [{ required: true, message: '商品单位不能为空', trigger: 'change' }],
+        goodsName: [{required: true, message: '商品名称不能为空', trigger: 'change'}],
+        goodsTypeId: [{required: true, message: '商品类型不能为空', trigger: 'change'}],
+        goodsUnitId: [{required: true, message: '商品单位不能为空', trigger: 'change'}],
       },
       downloadLoading: false
     }
   },
   created() {
     this.getList()
+    this.getGoodsUnitList()
   },
   methods: {
-    // 获取商品单位列表
+    // 获取商品信息列表
     getList() {
       this.listLoading = true
       listGoodsInfo(this.listQuery).then(response => {
@@ -173,6 +212,12 @@ export default {
           type: 'error',
           duration: 3000
         })
+      })
+    },
+    // 获取商品信息列表
+    getGoodsUnitList() {
+      listGoodsUnit(this.listQuery).then(response => {
+        this.goodsUnits = response.data.list
       })
     },
     doSearch() {
