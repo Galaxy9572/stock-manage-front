@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.keyword" placeholder="客户名称或联系人" style="width: 500px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+      <el-input v-model="listQuery.keyword" placeholder="供应商名称或联系人" style="width: 500px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
-        新增
+        新增供应商
       </el-button>
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="客户名称" prop="customerName" align="center" min-width="25%">
+      <el-table-column label="供应商名称" prop="supplierName" align="center" min-width="25%">
         <template slot-scope="{row}">
-          <span>{{ row.customerName }}</span>
+          <span>{{ row.supplierName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="联系人" prop="contactPerson" align="center" min-width="15%">
@@ -23,7 +23,7 @@
       </el-table-column>
       <el-table-column label="地址" prop="address" align="center" min-width="25%">
         <template slot-scope="{row}">
-          <span>{{ row.country + " - " + row.state + " - " + row.city + " - " + row.address }}</span>
+          <span>{{ row.country + " - " + row.state + " - " + row.city + " - " +  row.district + " - " + row.address }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" prop="memo" align="center" min-width="15%">
@@ -48,9 +48,9 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 500px; margin-left:50px;">
-        <el-form-item label="客户名称" prop="customerName">
-          <el-input v-model="temp.customerName" />
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px; margin:0 auto;text-align: center">
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-input v-model="temp.supplierName" />
         </el-form-item>
 
         <el-form-item label="联系人" prop="contactPerson">
@@ -78,21 +78,27 @@
         </el-form-item>
 
         <el-form-item label="区域">
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item prop="country">
               <el-input v-model="temp.country" placeholder="国家" />
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="3">-</el-col>
-          <el-col :span="6">
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="5">
             <el-form-item prop="state">
-              <el-input v-model="temp.state"  placeholder="省、自治区、州" />
+              <el-input v-model="temp.state"  placeholder="省" />
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="3">-</el-col>
-          <el-col :span="6">
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="4">
             <el-form-item prop="city">
               <el-input v-model="temp.city"  placeholder="城市" />
+            </el-form-item>
+          </el-col>
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="4">
+            <el-form-item prop="district">
+              <el-input v-model="temp.district"  placeholder="区" />
             </el-form-item>
           </el-col>
         </el-form-item>
@@ -105,32 +111,25 @@
           <el-input v-model="temp.postCode" />
         </el-form-item>
 
-        <el-form-item label="初始应收款" prop="initAccountsReceivable">
-          <el-input v-model="temp.initAccountsReceivable" />
-        </el-form-item>
-
-        <el-form-item label="当前应收款" prop="currentAccountsReceivable">
-          <el-input v-model="temp.currentAccountsReceivable" />
-        </el-form-item>
-
         <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo" />
         </el-form-item>
+        <el-form-item style="margin: 0 auto;text-align: center">
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+            确认
+          </el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
-          确认
-        </el-button>
-      </div>
+
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {addModifyCustomerInfo, deleteCustomerInfo, listCustomerInfo} from '@/api/customer'
+import {addModifySupplierInfo, deleteSupplierInfo, listSupplierInfo} from '@/api/supplier'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -155,7 +154,7 @@ export default {
       },
       temp: {
         id: undefined,
-        customerName: "",
+        supplierName: "",
         contactPerson: "",
         phone: "",
         email: "",
@@ -164,18 +163,17 @@ export default {
         wechat: "",
         country: "",
         state: "",
+        district: "",
         city: "",
         address: "",
         postCode: "",
-        initAccountsReceivable: 0.00,
-        currentAccountsReceivable: 0.00,
         memo: ""
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑',
-        create: '新建'
+        update: '编辑供应商',
+        create: '新增供应商'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -192,7 +190,7 @@ export default {
     // 获取商品单位列表
     getList() {
       this.listLoading = true
-      listCustomerInfo(this.listQuery).then(response => {
+      listSupplierInfo(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
@@ -214,7 +212,7 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        customerName: "",
+        supplierName: "",
         contactPerson: "",
         phone: "",
         email: "",
@@ -224,6 +222,7 @@ export default {
         country: "",
         state: "",
         city: "",
+        district: "",
         address: "",
         postCode: "",
         initAccountsReceivable: 0.00,
@@ -244,20 +243,13 @@ export default {
     createGoodsUnit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addModifyCustomerInfo(this.temp).then(() => {
+          addModifySupplierInfo(this.temp).then(() => {
             this.dialogFormVisible = false
             this.getList()
             this.$notify({
               title: '提醒',
               message: '操作成功',
               type: 'success',
-              duration: 3000
-            })
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
               duration: 3000
             })
           })
@@ -277,7 +269,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           console.log(tempData)
-          addModifyCustomerInfo(tempData).then(() => {
+          addModifySupplierInfo(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '提醒',
@@ -286,19 +278,12 @@ export default {
               duration: 3000
             })
             this.getList()
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
     },
     handleDelete(id) {
-      deleteCustomerInfo(id).then(response => {
+      deleteSupplierInfo(id).then(response => {
         this.$notify({
           title: '提醒',
           message: '操作成功',
@@ -306,13 +291,6 @@ export default {
           duration: 3000
         })
         this.getList()
-      }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     formatJson(filterVal) {

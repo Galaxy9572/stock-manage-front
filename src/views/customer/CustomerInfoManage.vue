@@ -97,6 +97,10 @@
           </el-col>
         </el-form-item>
 
+        <el-form-item label="区" prop="district">
+          <el-input v-model="temp.district" />
+        </el-form-item>
+
         <el-form-item label="地址" prop="address">
           <el-input v-model="temp.address" />
         </el-form-item>
@@ -165,6 +169,7 @@ export default {
         country: "",
         state: "",
         city: "",
+        district: "",
         address: "",
         postCode: "",
         initAccountsReceivable: 0.00,
@@ -224,6 +229,7 @@ export default {
         country: "",
         state: "",
         city: "",
+        district: "",
         address: "",
         postCode: "",
         initAccountsReceivable: 0.00,
@@ -253,13 +259,6 @@ export default {
               type: 'success',
               duration: 3000
             })
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -286,13 +285,6 @@ export default {
               duration: 3000
             })
             this.getList()
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -306,13 +298,6 @@ export default {
           duration: 3000
         })
         this.getList()
-      }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     formatJson(filterVal) {
