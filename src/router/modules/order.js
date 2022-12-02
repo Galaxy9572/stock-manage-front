@@ -28,15 +28,6 @@ const orderRouter = {
         roles: ['admin']
       }
     },
-    {
-      path: 'order-record',
-      component: () => import('@/views/order/OrderRecordManage'),
-      name: '订单历史记录管理',
-      meta: {
-        title: '订单历史记录管理',
-        roles: ['admin']
-      }
-    }
   ]
 }
 export default orderRouter

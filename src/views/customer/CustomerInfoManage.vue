@@ -6,32 +6,62 @@
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
-        新增
+        新增客户信息
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="客户名称" prop="customerName" align="center" min-width="25%">
+    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
+      <el-table-column label="客户名称" fixed prop="customerName" align="center" width="300px">
         <template slot-scope="{row}">
           <span>{{ row.customerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" prop="contactPerson" align="center" min-width="15%">
+      <el-table-column label="联系人" prop="contactPerson" align="center" width="150px">
         <template slot-scope="{row}">
           <span>{{ row.contactPerson }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="地址" prop="address" align="center" min-width="25%">
+      <el-table-column label="国家" prop="country" align="center" width="150px">
         <template slot-scope="{row}">
-          <span>{{ row.country + " - " + row.state + " - " + row.city + " - " + row.address }}</span>
+          <span>{{ row.country }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" prop="memo" align="center" min-width="15%">
+      <el-table-column label="省/州/自治区" prop="state" align="center" width="150px">
+        <template slot-scope="{row}">
+          <span>{{ row.state }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="城市" prop="city" align="center" width="150px">
+        <template slot-scope="{row}">
+          <span>{{ row.city }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="区/县" prop="district" align="center" width="150px">
+        <template slot-scope="{row}">
+          <span>{{ row.district }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="地址" prop="address" align="center" width="300px">
+        <template slot-scope="{row}">
+          <span>{{ row.address }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" prop="memo" align="center" width="200px">
         <template slot-scope="{row}">
           <span>{{ row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.createUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.updateUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" align="center" width="250px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
@@ -48,7 +78,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 500px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px; margin:0 auto;text-align: center">
         <el-form-item label="客户名称" prop="customerName">
           <el-input v-model="temp.customerName" />
         </el-form-item>
@@ -78,57 +108,48 @@
         </el-form-item>
 
         <el-form-item label="区域">
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item prop="country">
               <el-input v-model="temp.country" placeholder="国家" />
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="3">-</el-col>
-          <el-col :span="6">
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="5">
             <el-form-item prop="state">
-              <el-input v-model="temp.state"  placeholder="省、自治区、州" />
+              <el-input v-model="temp.state"  placeholder="省" />
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="3">-</el-col>
-          <el-col :span="6">
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="4">
             <el-form-item prop="city">
               <el-input v-model="temp.city"  placeholder="城市" />
             </el-form-item>
           </el-col>
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="4">
+            <el-form-item prop="district">
+              <el-input v-model="temp.district"  placeholder="区" />
+            </el-form-item>
+          </el-col>
         </el-form-item>
-
-        <el-form-item label="区" prop="district">
-          <el-input v-model="temp.district" />
-        </el-form-item>
-
         <el-form-item label="地址" prop="address">
           <el-input v-model="temp.address" />
         </el-form-item>
-
         <el-form-item label="邮政编码" prop="postCode">
           <el-input v-model="temp.postCode" />
         </el-form-item>
-
-        <el-form-item label="初始应收款" prop="initAccountsReceivable">
-          <el-input v-model="temp.initAccountsReceivable" />
-        </el-form-item>
-
-        <el-form-item label="当前应收款" prop="currentAccountsReceivable">
-          <el-input v-model="temp.currentAccountsReceivable" />
-        </el-form-item>
-
         <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo" />
         </el-form-item>
+        <el-form-item style="margin: 0 auto;text-align: center">
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+            确认
+          </el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
-          确认
-        </el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -179,8 +200,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑',
-        create: '新建'
+        update: '编辑客户信息',
+        create: '新增客户信息'
       },
       dialogPvVisible: false,
       pvData: [],

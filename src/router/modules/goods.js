@@ -22,15 +22,6 @@ const goodsRouter = {
       }
     },
     {
-      path: 'goods-stock',
-      component: () => import('@/views/goods/GoodsStockManage'),
-      name: '商品库存管理',
-      meta: {
-        title: '商品库存管理',
-        roles: ['admin']
-      }
-    },
-    {
       path: 'stock-warning',
       component: () => import('@/views/goods/StockWarningManage'),
       name: '库存告警管理',

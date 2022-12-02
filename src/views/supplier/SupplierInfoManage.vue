@@ -10,28 +10,58 @@
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="供应商名称" prop="supplierName" align="center" min-width="25%">
+    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
+      <el-table-column label="供应商名称" fixed prop="supplierName" align="center" width="300px">
         <template slot-scope="{row}">
           <span>{{ row.supplierName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" prop="contactPerson" align="center" min-width="15%">
+      <el-table-column label="联系人" prop="contactPerson" align="center" width="150px">
         <template slot-scope="{row}">
           <span>{{ row.contactPerson }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="地址" prop="address" align="center" min-width="25%">
+      <el-table-column label="国家" prop="country" align="center" width="150px">
         <template slot-scope="{row}">
-          <span>{{ row.country + " - " + row.state + " - " + row.city + " - " +  row.district + " - " + row.address }}</span>
+          <span>{{ row.country }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" prop="memo" align="center" min-width="15%">
+      <el-table-column label="省/州/自治区" prop="state" align="center" width="150px">
+        <template slot-scope="{row}">
+          <span>{{ row.state }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="城市" prop="city" align="center" width="150px">
+        <template slot-scope="{row}">
+          <span>{{ row.city }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="区/县" prop="district" align="center" width="150px">
+        <template slot-scope="{row}">
+          <span>{{ row.district }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="地址" prop="address" align="center" width="300px">
+        <template slot-scope="{row}">
+          <span>{{ row.address }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" prop="memo" align="center" width="200px">
         <template slot-scope="{row}">
           <span>{{ row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.createUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.updateUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" align="center" width="250px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
@@ -102,15 +132,12 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-
         <el-form-item label="地址" prop="address">
           <el-input v-model="temp.address" />
         </el-form-item>
-
         <el-form-item label="邮政编码" prop="postCode">
           <el-input v-model="temp.postCode" />
         </el-form-item>
-
         <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo" />
         </el-form-item>
@@ -123,7 +150,6 @@
           </el-button>
         </el-form-item>
       </el-form>
-
     </el-dialog>
   </div>
 </template>
@@ -135,7 +161,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
-  name: 'GoodsUnitManage',
+  name: 'SupplierInfoManage',
   components: { Pagination },
   directives: { waves },
   filters: {
