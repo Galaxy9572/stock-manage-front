@@ -37,19 +37,19 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
-               style="width: 400px; margin-left:50px;">
+               style="width: 400px; margin: 0 auto; text-align: center">
         <el-form-item label="类型名称" prop="typeName">
           <el-input v-model="temp.typeName"/>
         </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='createMain' || dialogStatus=== 'createSub'?createGoodsType():updateData()">
+            确认
+          </el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='createMain' || dialogStatus=== 'createSub'?createGoodsType():updateData()">
-          确认
-        </el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -71,7 +71,7 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑',
+        update: '编辑商品类型',
         createMain: '新增大类',
         createSub: '新增子类型'
       },
@@ -140,13 +140,6 @@ export default {
               type: 'success',
               duration: 3000
             })
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -176,13 +169,6 @@ export default {
               duration: 3000
             })
             this.getList()
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -196,13 +182,6 @@ export default {
           duration: 3000
         })
         this.getList()
-      }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     }
   },
