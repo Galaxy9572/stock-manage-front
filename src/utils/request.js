@@ -48,9 +48,17 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
+      if (res.code === 400) {
+        Notification({
+          title: '参数错误',
+          message: res.message,
+          type: 'error',
+          duration: 3000
+        })
+      }
       if (res.code === 417) {
         Notification({
-          title: '错误',
+          title: '业务错误',
           message: res.message,
           type: 'error',
           duration: 3000
@@ -58,7 +66,7 @@ service.interceptors.response.use(
       }
       if (res.code === 500) {
         Notification({
-          title: '错误',
+          title: '服务器错误',
           message: '服务器内部错误',
           type: 'error',
           duration: 3000
