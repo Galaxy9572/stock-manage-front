@@ -10,7 +10,9 @@
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
+    <el-table
+      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
       <el-table-column label="客户名称" fixed prop="customerName" align="center" width="300px">
         <template slot-scope="{row}">
           <span>{{ row.customerName }}</span>
@@ -206,7 +208,7 @@ import Pagination from '@/components/Pagination'
 import {listRegions} from "@/api/region"; // secondary package based on el-pagination
 
 export default {
-  name: 'GoodsUnitManage',
+  name: 'CustomerInfoManage',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -275,7 +277,6 @@ export default {
       })
     },
     resetRegion(codeDesc, level){
-      console.log("codeDesc: " + codeDesc + ", level: " + level)
       switch (level) {
         case 'COUNTRY': {
           this.regionQuery = {

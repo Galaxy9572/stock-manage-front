@@ -10,7 +10,9 @@
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
+    <el-table
+      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
       <el-table-column label="供应商名称" fixed prop="supplierName" align="center" width="300px">
         <template slot-scope="{row}">
           <span>{{ row.supplierName }}</span>
@@ -110,25 +112,69 @@
         <el-form-item label="区域">
           <el-col :span="5">
             <el-form-item prop="country">
-              <el-input v-model="temp.country" placeholder="国家" />
+              <el-select clearable v-model="regionQuery.countryCode" filterable
+                         placeholder="国家"
+                         @focus="getRegionInfo('COUNTRY')"
+                         @clear="resetRegion('','COUNTRY')">
+                <el-option
+                  v-for="item in regionList"
+                  :key="item.id"
+                  :label="item.countryDesc"
+                  :value="item.countryCode"
+                  @click.native="resetRegion(item.countryDesc,'COUNTRY')">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
           <el-col :span="5">
             <el-form-item prop="state">
-              <el-input v-model="temp.state"  placeholder="省" />
+              <el-select clearable v-model="regionQuery.stateCode" filterable
+                         placeholder="省/自治区/州"
+                         @focus="getRegionInfo('STATE')"
+                         @clear="resetRegion('','STATE')">
+                <el-option
+                  v-for="item in regionList"
+                  :key="item.id"
+                  :label="item.stateDesc"
+                  :value="item.stateCode"
+                  @click.native="resetRegion(item.stateDesc,'STATE')">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
           <el-col :span="4">
             <el-form-item prop="city">
-              <el-input v-model="temp.city"  placeholder="城市" />
+              <el-select clearable v-model="regionQuery.cityCode" filterable
+                         placeholder="市"
+                         @focus="getRegionInfo('CITY')"
+                         @clear="resetRegion('','CITY')">
+                <el-option
+                  v-for="item in regionList"
+                  :key="item.id"
+                  :label="item.cityDesc"
+                  :value="item.cityCode"
+                  @click.native="resetRegion(item.cityDesc,'CITY')">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
           <el-col :span="4">
             <el-form-item prop="district">
-              <el-input v-model="temp.district"  placeholder="区" />
+              <el-select clearable v-model="regionQuery.districtCode" filterable
+                         placeholder="区/县"
+                         @change="resetRegion('','DISTRICT')"
+                         @focus="getRegionInfo('DISTRICT')">
+                <el-option
+                  v-for="item in regionList"
+                  :key="item.id"
+                  :label="item.districtDesc"
+                  :value="item.districtCode"
+                  @click.native="resetRegion(item.districtDesc,'DISTRICT')">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-form-item>
@@ -158,7 +204,8 @@
 import {addModifySupplierInfo, deleteSupplierInfo, listSupplierInfo} from '@/api/supplier'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
+import {listRegions} from "@/api/region"; // secondary package based on el-pagination
 
 export default {
   name: 'SupplierInfoManage',
@@ -178,6 +225,14 @@ export default {
         pageSize: 20,
         keyword: ""
       },
+      regionQuery: {
+        countryCode: "",
+        stateCode: "",
+        cityCode: "",
+        districtCode: "",
+        level: ""
+      },
+      regionList: [],
       temp: {
         id: undefined,
         supplierName: "",
@@ -213,7 +268,56 @@ export default {
     this.getList()
   },
   methods: {
-    // 获取商品单位列表
+    getRegionInfo(level) {
+      this.regionQuery.level = level
+      listRegions(this.regionQuery).then(response => {
+        this.regionList = response.data
+      })
+    },
+    resetRegion(codeDesc, level){
+      console.log("codeDesc: " + codeDesc + ", level: " + level)
+      switch (level) {
+        case 'COUNTRY': {
+          this.regionQuery = {
+            countryCode: this.regionQuery.countryCode,
+            stateCode: "",
+            cityCode: "",
+            districtCode: "",
+            level: "COUNTRY"
+          }
+          this.temp.country = codeDesc
+          break
+        }
+        case 'STATE': {
+          this.regionQuery = {
+            countryCode: this.regionQuery.countryCode,
+            stateCode: this.regionQuery.stateCode,
+            cityCode: "",
+            districtCode: "",
+            level: "STATE"
+          }
+          this.temp.state = codeDesc
+          break
+        }
+        case 'CITY': {
+          this.regionQuery = {
+            countryCode: this.regionQuery.countryCode,
+            stateCode: this.regionQuery.stateCode,
+            cityCode: this.regionQuery.cityCode,
+            districtCode: "",
+            level: "CITY"
+          }
+          this.temp.city = codeDesc
+          break
+        }
+        case 'DISTRICT': {
+          this.temp.district = codeDesc
+          break
+        }
+        default: break
+      }
+    },
+    // 获取供应商列表
     getList() {
       this.listLoading = true
       listSupplierInfo(this.listQuery).then(response => {

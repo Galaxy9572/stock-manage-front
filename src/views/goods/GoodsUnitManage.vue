@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="listQuery.unitName" placeholder="单位名称" style="width: 200px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+    <div class="filter-container" style="width: 1600px; margin: 0 auto">
+      <el-input v-model="listQuery.unitName" placeholder="单位名称" style="width: 400px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
@@ -10,38 +10,40 @@
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="单位名称" prop="unitName" align="center" min-width="20%">
+    <el-table
+      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 1600px; margin: 0 auto;">
+      <el-table-column label="单位名称" prop="unitName" align="center" width="300px">
         <template slot-scope="{row}">
           <span>{{ row.unitName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否允许小数" prop="unitName" align="center" min-width="20%">
+      <el-table-column label="是否允许小数" prop="allowDecimal" align="center" width="300px">
         <template slot-scope="{row}">
           <span><el-tag>{{ booleanMap[row.allowDecimal] }}</el-tag></span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" min-width="20%" align="center">
+      <el-table-column label="创建人" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.createUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改人" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="200px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" min-width="20%" align="center">
+      <el-table-column label="修改时间" width="200px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" min-width="15%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.createUserId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="修改人" min-width="15%" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updateUserId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="199px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑

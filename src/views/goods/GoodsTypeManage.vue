@@ -1,18 +1,19 @@
 <template>
   <div class="app-container">
-    <div class="filter-container" style="width: 60%; margin: 0 auto">
+    <div class="filter-container" style="width: 1400px; margin: 0 auto">
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateMainDialog">
         新增大类
       </el-button>
     </div>
     <el-table
+      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
       :data="list"
-      style="width: 60%; margin: 0 auto"
+      style="width: 1400px; margin: 0 auto"
       row-key="id"
       border
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-      <el-table-column prop="typeName" label="类型名称" min-width="70%">
+      <el-table-column prop="typeName" label="类型名称" width="300px">
         <template slot-scope="{row}">
           <el-tag
             closable
@@ -23,7 +24,27 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="30%" class-name="small-padding fixed-width">
+      <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.createUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.updateUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" width="299px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
@@ -175,12 +196,21 @@ export default {
     },
     handleDelete(id) {
       deleteGoodsType(id).then(response => {
-        this.$notify({
-          title: '提醒',
-          message: '操作成功',
-          type: 'success',
-          duration: 3000
-        })
+        if (response.data) {
+          this.$notify({
+            title: '提醒',
+            message: '操作成功',
+            type: 'success',
+            duration: 3000
+          })
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '删除失败',
+            type: 'error',
+            duration: 3000
+          })
+        }
         this.getList()
       })
     }

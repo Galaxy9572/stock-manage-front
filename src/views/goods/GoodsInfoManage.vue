@@ -32,44 +32,66 @@
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
+    <el-table
+      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
               width="100%">
-      <el-table-column label="商品名称" fixed prop="goodsName" align="center" min-width="15%">
+      <el-table-column label="商品名称" fixed prop="goodsName" align="center" width="300px">
         <template slot-scope="{row}">
           <span>{{ row.goodsName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品类型" min-width="20%" align="center">
+      <el-table-column label="商品类型" width="100px" align="center">
         <template slot-scope="{row}">
           <span><el-tag>{{ row.goodsType.typeName }}</el-tag></span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="10%" align="center">
+      <el-table-column label="单位" width="100px" align="center">
         <template slot-scope="{row}">
           <span><el-tag>{{ row.goodsUnit.unitName }}</el-tag></span>
         </template>
       </el-table-column>
-      <el-table-column label="进货价" prop="purchasePrice" align="center" min-width="15%">
+      <el-table-column label="进货价" prop="purchasePrice" align="center" width="150px">
         <template slot-scope="{row}">
           <span>{{ row.purchasePrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="零售价" prop="retailPrice" min-width="15%" align="center">
+      <el-table-column label="零售价" prop="retailPrice" align="center" width="150px">
         <template slot-scope="{row}">
           <span>{{ row.retailPrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="批发价" prop="wholesalePrice" min-width="15%" align="center">
+      <el-table-column label="批发价" prop="wholesalePrice" align="center" width="150px">
         <template slot-scope="{row}">
           <span>{{ row.wholesalePrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" min-width="15%" align="center" show-overflow-tooltip="true">
+      <el-table-column label="备注" align="center" width="200px">
         <template slot-scope="{row}">
           <span>{{ row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" align="center" min-width="15%" class-name="small-padding fixed-width">
+      <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.createUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.updateUser.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" align="center" width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
@@ -293,12 +315,21 @@ export default {
     },
     handleDelete(id) {
       deleteGoodsInfo(id).then(response => {
-        this.$notify({
-          title: '提醒',
-          message: '操作成功',
-          type: 'success',
-          duration: 3000
-        })
+        if (response.data) {
+          this.$notify({
+            title: '提醒',
+            message: '操作成功',
+            type: 'success',
+            duration: 3000
+          })
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '删除失败',
+            type: 'error',
+            duration: 3000
+          })
+        }
         this.getList()
       })
     },

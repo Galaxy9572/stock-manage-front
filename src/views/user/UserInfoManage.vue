@@ -21,7 +21,9 @@
       </el-button>
     </div>
 
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
+    <el-table
+      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
               width="100%">
       <el-table-column label="用户名" prop="userName" align="center" min-width="20%">
         <template slot-scope="{row}">
