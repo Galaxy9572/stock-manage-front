@@ -11,8 +11,8 @@ const orderRouter = {
   },
   children: [
     {
-      path: 'order-record',
-      component: () => import('@/views/order/OrderRecordManage'),
+      path: 'replenish-manage',
+      component: () => import('@/views/order/ReplenishManage.vue'),
       name: '发货管理',
       meta: {
         title: '发货管理',
@@ -20,8 +20,8 @@ const orderRouter = {
       }
     },
     {
-      path: 'order-record',
-      component: () => import('@/views/order/OrderRecordManage'),
+      path: 'dispatch-manage',
+      component: () => import('@/views/order/DispatchManage.vue'),
       name: '进货管理',
       meta: {
         title: '进货管理',

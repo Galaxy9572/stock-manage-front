@@ -14,15 +14,6 @@
                    @change="handleGoodsTypeChange"
                    @focus="listGoodsTypes">
       </el-cascader>
-      <el-select class="filter-item" clearable v-load style="margin-right: 20px" v-model="listQuery.goodsUnitId" filterable
-                 placeholder="请选择商品单位">
-        <el-option
-          v-for="item in goodsUnits"
-          :key="item.id"
-          :label="item.unitName"
-          :value="item.id">
-        </el-option>
-      </el-select>
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search"
                  @click="doSearch">
         搜索
@@ -91,10 +82,13 @@
           <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" align="center" width="200px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" fixed="right" align="center" width="300px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
+          </el-button>
+          <el-button type="warning" size="mini" icon="el-icon-more" @click="openGoodsStockWarningDialog(row)">
+            库存告警设置
           </el-button>
           <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger"
                      @click="handleDelete(row.id)">
@@ -154,6 +148,38 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stockDialogFormVisible">
+      <el-form ref="goodsStockDataForm" :rules="goodsStockRules" :model="goodsStockTemp" label-position="left" label-width="150px"
+               style="width: 400px; margin: 0 auto">
+        <el-form-item label="商品名称" prop="goodsName">
+          <span>{{goodsStockTemp.goodsName}}</span>
+        </el-form-item>
+        <el-form-item label="是否开启告警" prop="allowStockWarning">
+          <el-switch
+            v-model="goodsStockTemp.allowStockWarning"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="告警下限" prop="minStockNum">
+          <el-col :span="10">
+            <el-input type="number" min="0" v-model="goodsStockTemp.minStockNum" :disabled="!goodsStockTemp.allowStockWarning" @input="limitInput($event, 'minStockNum')"/>
+          </el-col>
+          <el-col :span="4" style="margin-left: 10px">
+            <span>{{goodsStockTemp.goodsUnit.unitName}}</span>
+          </el-col>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="stockDialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="addModifyGoodsStock">
+            确认
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -198,14 +224,35 @@ export default {
         wholesalePrice: 0.00,
         memo: ""
       },
+      goodsStockTemp: {
+        id: null,
+        goodsTypeId: null,
+        goodsUnitId: null,
+        goodsName: "",
+        purchasePrice: 0.00,
+        retailPrice: 0.00,
+        wholesalePrice: 0.00,
+        memo: "",
+        allowStockWarning: true,
+        minStockNum: 0.00,
+        goodsUnit: {
+          id: null,
+          unitName: "",
+          allowDecimal: false,
+          createTime: null,
+          updateTime: null,
+          createUser: null,
+          updateUser: null
+        }
+      },
       dialogFormVisible: false,
+      stockDialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
-        create: '新建'
+        create: '新建',
+        stock: '库存告警设置'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         goodsName: [{required: true, message: '商品名称不能为空', trigger: 'blur'}],
         goodsTypeId: [{required: true, message: '商品类型不能为空', trigger: 'blur'}],
@@ -213,6 +260,9 @@ export default {
         purchasePrice: [{required: true, message: '进货价不能为空', trigger: 'blur'}],
         retailPrice: [{required: true, message: '零售价不能为空', trigger: 'blur'}],
         wholesalePrice: [{required: false, message: '商品单位不能为空', trigger: 'blur'}],
+      },
+      goodsStockRules: {
+        minStockNum: [{required: true, message: '告警下限非法', trigger: 'blur'}]
       },
       downloadLoading: false
     }
@@ -300,6 +350,31 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           console.log(tempData)
+          addModifyGoodsInfo(tempData).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '提醒',
+              message: '操作成功',
+              type: 'success',
+              duration: 3000
+            })
+            this.getList()
+          })
+        }
+      })
+    },
+    openGoodsStockWarningDialog(row) {
+      this.goodsStockTemp = Object.assign({}, row) // copy obj
+      this.dialogStatus = 'stock'
+      this.stockDialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['goodsStockDataForm'].clearValidate()
+      })
+    },
+    addModifyGoodsStock() {
+      this.$refs['goodsStockDataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
           addModifyGoodsInfo(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({

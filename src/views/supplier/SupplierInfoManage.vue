@@ -63,6 +63,16 @@
           <span>{{ row.updateUser.userName }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="创建时间" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" align="center" width="250px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
