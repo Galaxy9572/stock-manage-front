@@ -159,7 +159,9 @@
           <el-switch
             v-model="goodsStockTemp.allowStockWarning"
             active-color="#13ce66"
-            inactive-color="#ff4949">
+            inactive-color="#ff4949"
+            active-value="true"
+            inactive-value="false">
           </el-switch>
         </el-form-item>
         <el-form-item label="告警下限" prop="minStockNum">
