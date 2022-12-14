@@ -222,10 +222,11 @@ import {
 import waves from '@/directive/waves'
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
+import Link from "@/layout/components/Sidebar/Link.vue";
 
 export default {
   name: 'GoodsInfoManage',
-  components: {Pagination},
+  components: {Link, Pagination},
   directives: {waves},
   filters: {},
   data() {
@@ -496,8 +497,5 @@ export default {
 </script>
 
 <style>
-.line {
-  text-align: center;
-  margin: 0 auto;
-}
+
 </style>

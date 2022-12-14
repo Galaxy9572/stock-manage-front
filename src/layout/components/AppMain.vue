@@ -9,8 +9,18 @@
 </template>
 
 <script>
+import CopyRight from './CopyRight'
+
 export default {
   name: 'AppMain',
+  components: {
+    CopyRight
+  },
+  data() {
+    return {
+      isEnter: true
+    }
+  },
   computed: {
     cachedViews() {
       return this.$store.state.tagsView.cachedViews
@@ -31,7 +41,7 @@ export default {
   overflow: hidden;
 }
 
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 
@@ -41,7 +51,7 @@ export default {
     min-height: calc(100vh - 84px);
   }
 
-  .fixed-header+.app-main {
+  .fixed-header + .app-main {
     padding-top: 84px;
   }
 }
@@ -53,5 +63,37 @@ export default {
   .fixed-header {
     padding-right: 15px;
   }
+}
+
+.index {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.el-container {
+  margin: 0 0;
+  padding: 0 0;
+  width: 100%;
+  min-height: 98%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.el-main {
+  margin: 0 0;
+  padding: 0 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.el-footer {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  box-shadow: 0 -1px rgba(0, 0, 0, .12);
 }
 </style>
