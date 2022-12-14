@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.goodsName" placeholder="商品名称" style="width: 300px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
+      <el-input v-model="listQuery.goodsName" placeholder="请输入商品名称、客户/供应商名称或订单号" style="width: 350px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
       <el-cascader class="filter-item" style="margin-right: 20px"
         placeholder="请选择商品类型"
         ref="goodsTypeCascader"
@@ -13,49 +13,82 @@
         @change="handleGoodsTypeChange"
         @focus="listGoodsTypes">
       </el-cascader>
-      <el-select class="filter-item" clearable v-load style="margin-right: 20px" v-model="value" filterable placeholder="请选择商品单位">
+      <el-select class="filter-item" clearable style="margin-right: 20px" v-model="temp.orderType" filterable placeholder="请选择订单类型">
         <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in orderTypes"
+          :key="item.code"
+          :label="item.desc"
+          :value="item.code">
         </el-option>
       </el-select>
+      <el-date-picker
+        style="margin-right: 20px"
+        class="filter-item"
+        v-model="listQuery.orderTime"
+        clearable
+        type="daterange"
+        align="right"
+        unlink-panels
+        range-separator="至"
+        start-placeholder="订单开始日期"
+        end-placeholder="订单结束日期"
+        :picker-options="pickerOptions">
+      </el-date-picker>
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
         搜索
       </el-button>
+    </div>
+    <div class="filter-container">
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
-        新增
+        新增订单
       </el-button>
     </div>
-
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" width="100%">
-      <el-table-column label="商品名称" prop="goodsName" align="center" min-width="20%">
+    <el-table
+      :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
+      :key="tableKey" v-loading="listLoading" :data="list"
+              border fit highlight-current-row width="1400px">
+      <el-table-column fixed label="订单号" prop="orderId" align="center" width="300px">
         <template slot-scope="{row}">
-          <span>{{ row.goodsName }}</span>
+          <span>{{ row.orderId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品类型" min-width="20%" align="center">
+      <el-table-column label="订单类型" prop="orderType" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.goodsType.typeName }}</span>
+          <span>{{ row.orderType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="15%" align="center">
+      <el-table-column label="客户/供应商名称" min-width="300px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.goodsUnit.unitName }}</span>
+          <span v-show="row.orderType==='REPLENISH'">{{ row.supplier.supplierName }}</span>
+          <span v-show="row.orderType==='DISPATCH'">{{ row.customer.customerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" min-width="20%" align="center">
+      <el-table-column label="支付方式" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.paymentMethod }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="总价" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.totalPrice }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" min-width="200px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="15%" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+      <el-table-column label="创建时间" align="center" width="200px">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" align="center" width="200px" class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
           </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(row.id)">
+          <el-button size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(row.id)">
             删除
           </el-button>
         </template>
@@ -64,20 +97,28 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="商品名称" prop="goodsName">
-          <el-input v-model="temp.goodsName" />
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
+      <el-divider></el-divider>
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px" style="width: 400px; margin: 0 auto">
+        <el-form-item label="订单类型">
+          <el-select class="filter-item" clearable style="margin-right: 20px" v-model="temp.orderType" filterable placeholder="请选择订单类型">
+            <el-option
+              v-for="item in orderTypes"
+              :key="item.code"
+              :label="item.desc"
+              :value="item.code">
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
-          确认
-        </el-button>
-      </div>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+            确认
+          </el-button>
+        </span>
     </el-dialog>
   </div>
 </template>
@@ -90,7 +131,9 @@ import {
 } from '@/api/goods'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import * as DateUtils from '@/utils/date'
+import Pagination from '@/components/Pagination'
+import {listAllOrderTypeList, listOrderRecordsByPage} from "@/api/order"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsInfoManage',
@@ -104,17 +147,19 @@ export default {
       tableKey: 0,
       list: null,
       goodsTypes: [],
+      orderTypes: [],
       total: 0,
       listLoading: true,
       listQuery: {
         pageNo: 1,
         pageSize: 20,
         goodsTypeId: null,
-        goodsUnitId: null,
-        goodsName: ""
+        keyword: null,
+        orderTime: []
       },
       temp: {
         id: null,
+        orderType: null,
         goodsTypeId: null,
         goodsUnitId: null,
         goodsName: "",
@@ -133,28 +178,66 @@ export default {
         goodsTypeId: [{ required: true, message: '商品类型不能为空', trigger: 'change' }],
         goodsUnitId: [{ required: true, message: '商品单位不能为空', trigger: 'change' }],
       },
-      downloadLoading: false
+      downloadLoading: false,
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(Date.today().addWeeks(-1));
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(Date.today().addMonths(-1));
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(Date.today().addMonths(-3));
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近半年',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(Date.today().addMonths(-6));
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一年',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(Date.today().addYears(-1));
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      }
     }
   },
   created() {
     this.getList()
+    this.listOrderTypes()
   },
   methods: {
     // 获取商品单位列表
     getList() {
       this.listLoading = true
-      listGoodsInfo(this.listQuery).then(response => {
+      listOrderRecordsByPage(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
       }).catch(error => {
         this.listLoading = false
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     doSearch() {
@@ -199,13 +282,6 @@ export default {
               type: 'success',
               duration: 3000
             })
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -232,13 +308,6 @@ export default {
               duration: 3000
             })
             this.getList()
-          }).catch(error => {
-            this.$notify({
-              title: '提醒',
-              message: error.message,
-              type: 'error',
-              duration: 3000
-            })
           })
         }
       })
@@ -252,13 +321,6 @@ export default {
           duration: 3000
         })
         this.getList()
-      }).catch(error => {
-        this.$notify({
-          title: '提醒',
-          message: error.message,
-          type: 'error',
-          duration: 3000
-        })
       })
     },
     formatJson(filterVal) {
@@ -276,8 +338,11 @@ export default {
     listGoodsTypes() {
       listGoodsTypes().then(response => {
         this.goodsTypes = this.getTreeData(response.data);
-        console.log(this.goodsTypes)
-      }).catch(error => {
+      })
+    },
+    listOrderTypes() {
+      listAllOrderTypeList().then(response => {
+        this.orderTypes = response.data;
       })
     },
     getTreeData(data) {

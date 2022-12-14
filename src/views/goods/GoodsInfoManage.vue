@@ -10,7 +10,7 @@
                    v-model="listQuery.goodsTypeId"
                    clearable
                    :options="goodsTypes"
-                   :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover' }"
+                   :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover'}"
                    @change="handleGoodsTypeChange"
                    @focus="listGoodsTypes">
       </el-cascader>
@@ -24,7 +24,7 @@
     </div>
 
     <el-table
-      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
               width="100%">
       <el-table-column label="商品名称" fixed prop="goodsName" align="center" width="300px">
@@ -101,55 +101,82 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize"
                 @pagination="getList"/>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
-               style="width: 400px; margin: 0 auto">
-        <el-form-item label="商品名称" prop="goodsName">
-          <el-input v-model="temp.goodsName"/>
-        </el-form-item>
-        <el-form-item label="商品类型" prop="goodsTypeId">
-          <el-cascader style="margin-right: 20px"
-                       placeholder="请选择商品类型"
-                       ref="goodsTypeCascader"
-                       :key="id"
-                       v-model="temp.goodsTypeId"
-                       clearable
-                       :options="goodsTypes"
-                       :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover'}"
-                       @change="handleGoodsTypeChange">
-          </el-cascader>
-        </el-form-item>
-        <el-form-item label="商品单位" prop="goodsTypeId">
-          <el-select v-model="temp.goodsUnitId" placeholder="请选择商品单位">
-            <el-option
-              v-for="item in goodsUnits"
-              :key="item.id"
-              :label="item.unitName"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="进货价" prop="purchasePrice">
-          <el-input type="number" min="0" v-model="temp.purchasePrice" @input="limitInput($event, 'purchasePrice')"/>
-        </el-form-item>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-width="100px"
+               style="width: 600px; margin: 0 auto">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="商品名称" prop="goodsName">
+              <el-input v-model="temp.goodsName"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="14">
+            <el-form-item label="商品类型" prop="goodsTypeId">
+              <el-cascader placeholder="请选择商品类型"
+                           ref="goodsTypeCascader"
+                           :key="id"
+                           v-model="temp.goodsTypeId"
+                           clearable
+                           :options="goodsTypes"
+                           :props="{value: 'id', label: 'typeName', children: 'children', expandTrigger: 'hover'}"
+                           @change="handleGoodsTypeChange">
+              </el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="商品单位" prop="goodsTypeId">
+              <el-select ref="goodsUnitSelector" v-model="temp.goodsUnitId" placeholder="请选择商品单位" @change="updateSelectedGoodsUnit">
+                <el-option
+                  v-for="item in goodsUnits"
+                  :key="item.id"
+                  :label="item.unitName"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="18" style="margin-right: 20px">
+            <el-form-item label="进货价" prop="purchasePrice">
+              <el-input type="number" min="0" v-model="temp.purchasePrice" @input="limitInput($event, 'purchasePrice')"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4" style="margin-left: 12px">
+            <el-button icon="el-icon-s-marketing" type="primary" plain disabled>价格参考</el-button>
+          </el-col>
+        </el-row>
+
         <el-form-item label="零售价" prop="retailPrice">
           <el-input type="number" min="0" v-model="temp.retailPrice" @input="limitInput($event, 'retailPrice')"/>
         </el-form-item>
         <el-form-item label="批发价" prop="wholesalePrice">
           <el-input type="number" min="0" v-model="temp.wholesalePrice" @input="limitInput($event, 'wholesalePrice')"/>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-show="dialogStatus==='create'" label="初始库存" prop="initStockNum">
+          <el-col :span="20">
+            <el-input type="number" min="0" v-model="temp.initStockNum" @input="limitInput($event, 'initStockNum')"/>
+          </el-col>
+          <el-col :span="4">
+            <span style="margin-left: 10px">{{showTemp.selectedGoodsUnitName}}</span>
+          </el-col>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
           <el-button type="primary" @click="dialogStatus==='create'?addModifyGoodsUnit():updateData()">
             确认
           </el-button>
-        </el-form-item>
-      </el-form>
+      </span>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stockDialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stockDialogFormVisible" center>
       <el-form ref="goodsStockDataForm" :rules="goodsStockRules" :model="goodsStockTemp" label-position="left" label-width="150px"
                style="width: 400px; margin: 0 auto">
         <el-form-item label="商品名称" prop="goodsName">
@@ -161,7 +188,8 @@
             active-color="#13ce66"
             inactive-color="#ff4949"
             active-value="true"
-            inactive-value="false">
+            inactive-value="false"
+            value="false">
           </el-switch>
         </el-form-item>
         <el-form-item label="告警下限" prop="minStockNum">
@@ -172,15 +200,15 @@
             <span>{{goodsStockTemp.goodsUnit.unitName}}</span>
           </el-col>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="stockDialogFormVisible = false">
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="stockDialogFormVisible = false">
             取消
           </el-button>
-          <el-button type="primary" @click="addModifyGoodsStock">
+          <el-button type="primary" @click="modifyGoodsStockWarning">
             确认
           </el-button>
-        </el-form-item>
-      </el-form>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -189,7 +217,7 @@
 import {
   listGoodsInfo,
   addModifyGoodsInfo,
-  deleteGoodsInfo, listGoodsTypes, listGoodsUnit
+  deleteGoodsInfo, listGoodsTypes, listGoodsUnit, modifyGoodsStockWarning
 } from '@/api/goods'
 import waves from '@/directive/waves'
 import {parseTime} from '@/utils'
@@ -224,7 +252,11 @@ export default {
         purchasePrice: 0.00,
         retailPrice: 0.00,
         wholesalePrice: 0.00,
+        initStockNum: 0.00,
         memo: ""
+      },
+      showTemp : {
+        selectedGoodsUnitName: ""
       },
       goodsStockTemp: {
         id: null,
@@ -251,8 +283,8 @@ export default {
       stockDialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑',
-        create: '新建',
+        update: '编辑商品',
+        create: '新增商品',
         stock: '库存告警设置'
       },
       rules: {
@@ -373,11 +405,10 @@ export default {
         this.$refs['goodsStockDataForm'].clearValidate()
       })
     },
-    addModifyGoodsStock() {
+    modifyGoodsStockWarning() {
       this.$refs['goodsStockDataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          addModifyGoodsInfo(tempData).then(() => {
+          modifyGoodsStockWarning(this.goodsStockTemp).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '提醒',
@@ -456,7 +487,17 @@ export default {
       // 第五步：最终匹配得到结果 以数字开头，只有一个小数点，	而且小数点后面只能有0到2位小数
       .match(/^\d*(\.?\d{0,2})/g)[0] || ''
       this.temp[name] = this.$refs.dataForm[name]
+    },
+    updateSelectedGoodsUnit() {
+      this.showTemp.selectedGoodsUnitName = this.$refs.goodsUnitSelector.selected.label
     }
   }
 }
 </script>
+
+<style>
+.line {
+  text-align: center;
+  margin: 0 auto;
+}
+</style>

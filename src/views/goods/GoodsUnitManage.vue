@@ -6,12 +6,12 @@
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
-        新增
+        新增计量单位
       </el-button>
     </div>
 
     <el-table
-      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 1600px; margin: 0 auto;">
       <el-table-column label="单位名称" prop="unitName" align="center" width="300px">
         <template slot-scope="{row}">
@@ -57,7 +57,7 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin:0 auto;">
         <el-form-item label="单位名称" prop="unitName">
           <el-input v-model="temp.unitName" />
@@ -68,18 +68,19 @@
             active-color="#13ce66"
             inactive-color="#ff4949"
             active-value="true"
-            inactive-value="false">
+            inactive-value="false"
+            value="false">
           </el-switch>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="dialogFormVisible = false">
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
           <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
             确认
           </el-button>
-        </el-form-item>
-      </el-form>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -124,8 +125,8 @@ export default {
         false: '否'
       },
       textMap: {
-        update: '编辑',
-        create: '新建'
+        update: '编辑计量单位',
+        create: '新增计量单位'
       },
       dialogPvVisible: false,
       pvData: [],

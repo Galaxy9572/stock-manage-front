@@ -1,8 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.keyword" placeholder="客户名称或联系人" style="width: 500px; margin-right: 20px" class="filter-item" @keyup.enter.native="doSearch" />
-      <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search" @click="doSearch">
+      <el-input v-model="listQuery.keyword" placeholder="客户名称或联系人" style="width: 500px; margin-right: 20px"
+                class="filter-item" @keyup.enter.native="doSearch"/>
+      <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search"
+                 @click="doSearch">
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
@@ -87,40 +89,77 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize"
+                @pagination="getList"/>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px; margin:0 auto;text-align: center">
-        <el-form-item label="客户名称" prop="customerName">
-          <el-input v-model="temp.customerName" />
-        </el-form-item>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center top="5vh">
+      <el-form ref="dataForm" :rules="rules" :model="temp"
+               status-icon="true" label-width="100px"
+               style="width: 700px; margin:0 auto;text-align: center">
 
-        <el-form-item label="联系人" prop="contactPerson">
-          <el-input v-model="temp.contactPerson" />
-        </el-form-item>
+        <el-divider>基本信息</el-divider>
 
-        <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="temp.phone" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="14">
+            <el-form-item label="客户名称" prop="customerName">
+              <el-input v-model="temp.customerName"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="联系人" prop="contactPerson">
+              <el-input v-model="temp.contactPerson"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="电子邮箱" prop="email">
-          <el-input v-model="temp.email" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="memo">
+              <el-input v-model="temp.memo"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="传真" prop="fax">
-          <el-input v-model="temp.fax" />
-        </el-form-item>
+        <el-divider>联系方式</el-divider>
 
-        <el-form-item label="QQ号" prop="qq">
-          <el-input v-model="temp.qq" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系电话" prop="phone">
+              <el-input v-model="temp.phone"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="传真" prop="fax">
+              <el-input v-model="temp.fax"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="微信号" prop="wechat">
-          <el-input v-model="temp.wechat" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="QQ" prop="qq">
+              <el-input v-model="temp.qq"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="微信" prop="wechat">
+              <el-input v-model="temp.wechat"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="电子邮箱" prop="email">
+              <el-input v-model="temp.email"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-divider>地址信息</el-divider>
 
         <el-form-item label="区域">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item prop="country">
               <el-select clearable v-model="regionQuery.countryCode" filterable
                          placeholder="国家"
@@ -136,8 +175,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="5">
+          <el-col class="line" :span="1">
+            <el-divider direction="vertical"></el-divider>
+          </el-col>
+          <el-col :span="7">
             <el-form-item prop="state">
               <el-select clearable v-model="regionQuery.stateCode" filterable
                          placeholder="省/自治区/州"
@@ -153,7 +194,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
+          <el-col class="line" :span="1">
+            <el-divider direction="vertical"></el-divider>
+          </el-col>
           <el-col :span="4">
             <el-form-item prop="city">
               <el-select clearable v-model="regionQuery.cityCode" filterable
@@ -170,7 +213,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
+          <el-col class="line" :span="1">
+            <el-divider direction="vertical"></el-divider>
+          </el-col>
           <el-col :span="4">
             <el-form-item prop="district">
               <el-select clearable v-model="regionQuery.districtCode" filterable
@@ -188,24 +233,52 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="temp.address" />
-        </el-form-item>
-        <el-form-item label="邮政编码" prop="postCode">
-          <el-input v-model="temp.postCode" />
-        </el-form-item>
-        <el-form-item label="备注" prop="memo">
-          <el-input v-model="temp.memo" />
-        </el-form-item>
-        <el-form-item style="margin: 0 auto;text-align: center">
+
+        <el-row>
+          <el-col :span="16">
+            <el-form-item label="地址" prop="address">
+              <el-input v-model="temp.address"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="邮政编码" prop="postCode">
+              <el-input v-model="temp.postCode"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-divider>银行信息</el-divider>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="开户行" prop="bankName">
+              <el-input v-model="temp.bankName"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="银行卡号" prop="bankCardId">
+              <el-input v-model="temp.bankCardId"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="纳税人识别号" prop="taxpayerId">
+              <el-input v-model="temp.taxpayerId"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
-          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+          <el-button type="primary" @click="dialogStatus==='create'?createCustomerInfo():updateData()">
             确认
           </el-button>
-        </el-form-item>
-      </el-form>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -213,17 +286,15 @@
 <script>
 import {addModifyCustomerInfo, deleteCustomerInfo, listCustomerInfo} from '@/api/customer'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
 import {listRegions} from "@/api/region"; // secondary package based on el-pagination
 
 export default {
   name: 'CustomerInfoManage',
-  components: { Pagination },
-  directives: { waves },
-  filters: {
-
-  },
+  components: {Pagination},
+  directives: {waves},
+  filters: {},
   data() {
     return {
       tableKey: 0,
@@ -260,7 +331,10 @@ export default {
         postCode: "",
         initAccountsReceivable: 0.00,
         currentAccountsReceivable: 0.00,
-        memo: ""
+        memo: "",
+        bankName: "",
+        bankCardId: "",
+        taxpayerId: ""
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -271,7 +345,7 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        unitName: [{ required: true, message: '单位不能为空', trigger: 'change' }],
+        unitName: [{required: true, message: '单位不能为空', trigger: 'change'}],
       },
       downloadLoading: false
     }
@@ -286,7 +360,7 @@ export default {
         this.regionList = response.data
       })
     },
-    resetRegion(codeDesc, level){
+    resetRegion(codeDesc, level) {
       switch (level) {
         case 'COUNTRY': {
           this.regionQuery = {
@@ -325,7 +399,8 @@ export default {
           this.temp.district = codeDesc
           break
         }
-        default: break
+        default:
+          break
       }
     },
     // 获取客户信息列表
@@ -368,7 +443,10 @@ export default {
         postCode: "",
         initAccountsReceivable: 0.00,
         currentAccountsReceivable: 0.00,
-        memo: ""
+        memo: "",
+        bankName: "",
+        bankCardId: "",
+        taxpayerId: ""
       }
     },
     // 打开新增面板
@@ -381,7 +459,7 @@ export default {
       })
     },
     // 发送新增请求
-    createGoodsUnit() {
+    createCustomerInfo() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           addModifyCustomerInfo(this.temp).then(() => {

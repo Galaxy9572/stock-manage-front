@@ -13,7 +13,7 @@
       border
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-      <el-table-column prop="typeName" label="类型名称" width="300px">
+      <el-table-column fixed prop="typeName" label="类型名称" width="300px">
         <template slot-scope="{row}">
           <el-tag
             closable
@@ -44,7 +44,7 @@
           <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="299px" class-name="small-padding fixed-width">
+      <el-table-column fixed="right" label="操作" align="center" width="249px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
@@ -56,21 +56,21 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px"
-               style="width: 400px; margin: 0 auto; text-align: center">
+               style="width: 400px; margin: 0 auto">
         <el-form-item label="类型名称" prop="typeName">
           <el-input v-model="temp.typeName"/>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="dialogFormVisible = false">
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
           <el-button type="primary" @click="dialogStatus==='createMain' || dialogStatus=== 'createSub'?createGoodsType():updateData()">
             确认
           </el-button>
-        </el-form-item>
-      </el-form>
+      </span>
     </el-dialog>
   </div>
 </template>

@@ -22,7 +22,7 @@
     </div>
 
     <el-table
-      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
               width="100%">
       <el-table-column label="用户名" prop="userName" align="center" min-width="20%">
@@ -61,9 +61,8 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize"
                 @pagination="getList"/>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="addUserRules" :model="temp" label-position="left" label-width="80px"
-               style="width: 400px; margin:0 auto;">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
+      <el-form ref="dataForm" :rules="addUserRules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin:0 auto;text-align: center">
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="temp.userName"/>
         </el-form-item>
@@ -87,19 +86,19 @@
         <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo"/>
         </el-form-item>
-        <el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
           <el-button type="primary" @click="dialogStatus==='create'?addUser():updateData()">
             确认
           </el-button>
-        </el-form-item>
-      </el-form>
+      </span>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="updateUserRules" :model="temp" label-position="left" label-width="80px"
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
+      <el-form ref="dataForm" :rules="updateUserRules" :model="temp" label-width="80px"
                style="width: 400px; margin:0 auto;">
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="temp.userName"/>
@@ -124,15 +123,15 @@
         <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo"/>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="dialogFormVisible = false">
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
           <el-button type="primary" @click="dialogStatus==='create'?addUser():updateData()">
             确认
           </el-button>
-        </el-form-item>
-      </el-form>
+      </span>
     </el-dialog>
   </div>
 </template>

@@ -74,3 +74,11 @@ export function getGoodsInfoDetail(data) {
     method: 'get'
   })
 }
+
+export function modifyGoodsStockWarning(data) {
+  return request({
+    url: '/api/goods/stock/warning',
+    method: 'put',
+    data
+  })
+}

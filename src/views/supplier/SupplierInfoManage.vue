@@ -11,7 +11,7 @@
     </div>
 
     <el-table
-      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
       <el-table-column label="供应商名称" fixed prop="supplierName" align="center" width="300px">
         <template slot-scope="{row}">
@@ -89,38 +89,72 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px; margin:0 auto;text-align: center">
-        <el-form-item label="供应商名称" prop="supplierName">
-          <el-input v-model="temp.supplierName" />
-        </el-form-item>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center top="5vh">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-width="100px" style="width: 650px; margin:0 auto;text-align: center">
 
-        <el-form-item label="联系人" prop="contactPerson">
-          <el-input v-model="temp.contactPerson" />
-        </el-form-item>
+        <el-divider>基本信息</el-divider>
 
-        <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="temp.phone" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="14">
+            <el-form-item label="供应商名称" prop="supplierName">
+              <el-input v-model="temp.supplierName" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="联系人" prop="contactPerson">
+              <el-input v-model="temp.contactPerson" />
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="电子邮箱" prop="email">
-          <el-input v-model="temp.email" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="memo">
+              <el-input v-model="temp.memo" />
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="传真" prop="fax">
-          <el-input v-model="temp.fax" />
-        </el-form-item>
+        <el-divider>联系信息</el-divider>
 
-        <el-form-item label="QQ号" prop="qq">
-          <el-input v-model="temp.qq" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系电话" prop="phone">
+              <el-input v-model="temp.phone"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="传真" prop="fax">
+              <el-input v-model="temp.fax"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="微信号" prop="wechat">
-          <el-input v-model="temp.wechat" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="QQ" prop="qq">
+              <el-input v-model="temp.qq"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="微信" prop="wechat">
+              <el-input v-model="temp.wechat"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="电子邮箱" prop="email">
+              <el-input v-model="temp.email"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-divider>地址信息</el-divider>
 
         <el-form-item label="区域">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item prop="country">
               <el-select clearable v-model="regionQuery.countryCode" filterable
                          placeholder="国家"
@@ -136,8 +170,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="5">
+          <el-col class="line" :span="1">
+            <el-divider direction="vertical"></el-divider>
+          </el-col>
+          <el-col :span="7">
             <el-form-item prop="state">
               <el-select clearable v-model="regionQuery.stateCode" filterable
                          placeholder="省/自治区/州"
@@ -153,7 +189,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
+          <el-col class="line" :span="1">
+            <el-divider direction="vertical"></el-divider>
+          </el-col>
           <el-col :span="4">
             <el-form-item prop="city">
               <el-select clearable v-model="regionQuery.cityCode" filterable
@@ -170,7 +208,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
+          <el-col class="line" :span="1">
+            <el-divider direction="vertical"></el-divider>
+          </el-col>
           <el-col :span="4">
             <el-form-item prop="district">
               <el-select clearable v-model="regionQuery.districtCode" filterable
@@ -188,24 +228,29 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="temp.address" />
-        </el-form-item>
-        <el-form-item label="邮政编码" prop="postCode">
-          <el-input v-model="temp.postCode" />
-        </el-form-item>
-        <el-form-item label="备注" prop="memo">
-          <el-input v-model="temp.memo" />
-        </el-form-item>
-        <el-form-item style="margin: 0 auto;text-align: center">
-          <el-button @click="dialogFormVisible = false">
-            取消
-          </el-button>
-          <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
-            确认
-          </el-button>
-        </el-form-item>
+
+        <el-row>
+          <el-col :span="16">
+            <el-form-item label="地址" prop="address">
+              <el-input v-model="temp.address"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="邮政编码" prop="postCode">
+              <el-input v-model="temp.postCode"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
       </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createGoodsUnit():updateData()">
+          确认
+        </el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
