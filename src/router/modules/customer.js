@@ -6,7 +6,7 @@ const customerRouter = {
   path: '/customer',
   component: Layout,
   redirect: '/customer/index',
-  name: '客户管理',
+  name: 'CustomerManage',
   meta: {
     title: '客户管理',
     icon: 'peoples'
@@ -15,10 +15,10 @@ const customerRouter = {
     {
       path: 'customer-info',
       component: () => import('@/views/customer/CustomerInfoManage'),
-      name: '客户信息管理',
+      name: 'CustomerInfoManage',
       meta: {
         title: '客户信息管理',
-        roles: ['admin'] // or you can only set roles in sub nav
+        roles: ['admin', 'user'] // or you can only set roles in sub nav
       }
     }
   ]

@@ -13,7 +13,8 @@
     </div>
 
     <el-table
-      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
+      stripe
+      :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
       <el-table-column label="客户名称" fixed prop="customerName" align="center" width="300px">
         <template slot-scope="{row}">

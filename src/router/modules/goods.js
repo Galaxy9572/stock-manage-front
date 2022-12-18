@@ -15,37 +15,41 @@ const goodsRouter = {
     {
       path: 'goods-info',
       component: () => import('@/views/goods/GoodsInfoManage'),
-      name: '商品信息管理',
+      name: 'GoodsInfoManage',
       meta: {
         title: '商品信息管理',
-        roles: ['admin']
+        icon: 'list',
+        roles: ['admin', 'user']
       }
     },
     {
       path: 'stock-warning',
       component: () => import('@/views/goods/StockWarningManage'),
-      name: '库存告警管理',
+      name: 'StockWarningManage',
       meta: {
         title: '库存告警管理',
-        roles: ['admin']
+        icon: 'chart',
+        roles: ['admin', 'user']
       }
     },
     {
       path: 'goods-type',
       component: () => import('@/views/goods/GoodsTypeManage'),
-      name: '商品类型管理',
+      name: 'GoodsTypeManage',
       meta: {
         title: '商品类型管理',
-        roles: ['admin']
+        icon: 'tree',
+        roles: ['admin', 'user']
       }
     },
     {
       path: 'goods-unit',
       component: () => import('@/views/goods/GoodsUnitManage'),
-      name: '商品计量单位管理',
+      name: 'GoodsUnitManage',
       meta: {
         title: '商品计量单位管理',
-        roles: ['admin']
+        icon: 'tree-table',
+        roles: ['admin', 'user']
       }
     },
   ]

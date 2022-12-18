@@ -44,6 +44,7 @@
       </el-button>
     </div>
     <el-table
+      stripe
       :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list"
               border fit highlight-current-row width="1400px">
@@ -125,7 +126,6 @@
 
 <script>
 import {
-  listGoodsInfo,
   addModifyGoodsInfo,
   deleteGoodsInfo, listGoodsTypes
 } from '@/api/goods'
@@ -183,41 +183,36 @@ export default {
         shortcuts: [{
           text: '最近一周',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(Date.today().addWeeks(-1));
+            const end = Date.today().clearTime()
+            const start = Date.today().addWeeks(-1)
             picker.$emit('pick', [start, end]);
           }
         }, {
           text: '最近一个月',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(Date.today().addMonths(-1));
+            const end = Date.today().clearTime()
+            const start = Date.today().addMonths(-1)
             picker.$emit('pick', [start, end]);
           }
         }, {
           text: '最近三个月',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(Date.today().addMonths(-3));
+            const end = Date.today().clearTime()
+            const start = Date.today().addMonths(-3)
             picker.$emit('pick', [start, end]);
           }
         }, {
           text: '最近半年',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(Date.today().addMonths(-6));
+            const end = Date.today().clearTime()
+            const start = Date.today().addMonths(-6)
             picker.$emit('pick', [start, end]);
           }
         }, {
           text: '最近一年',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(Date.today().addYears(-1));
+            const end = Date.today().clearTime()
+            const start = Date.today().addYears(-1)
             picker.$emit('pick', [start, end]);
           }
         }]

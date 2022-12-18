@@ -6,7 +6,7 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
+<!--        <search id="header-search" class="right-menu-item" />-->
 
         <error-log class="errLog-container right-menu-item hover-effect" />
 
@@ -30,15 +30,41 @@
           <router-link to="/">
             <el-dropdown-item>仪表板</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>文档</el-dropdown-item>
-          </a>
+<!--          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">-->
+<!--            <el-dropdown-item>文档</el-dropdown-item>-->
+<!--          </a>-->
+          <el-dropdown-item divided @click.native="dialogFormVisible=true">
+            <span style="display:block;">关于</span>
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog :title="textMap[aboutTitle]" :visible.sync="dialogFormVisible" center>
+      <el-form ref="dataForm" label-width="80px" style="width: 300px; margin: 0 auto">
+        <el-row>
+          <el-col :span="12" align="center">系统版本：</el-col>
+          <el-col :span="12" align="center">1.0.0</el-col>
+        </el-row>
+        <el-divider style="margin-top: 0;padding-top: 0"></el-divider>
+        <el-row>
+          <el-col :span="12" align="center">版本日期：</el-col>
+          <el-col :span="12" align="center">2022.12</el-col>
+        </el-row>
+        <el-divider style="margin-top: 0;padding-top: 0"></el-divider>
+        <el-row>
+          <el-col :span="12" align="center">版权所有：</el-col>
+          <el-col :span="12" align="center">Liao.Junyao</el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogFormVisible = false">
+          确认
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -66,6 +92,15 @@ export default {
       'avatar',
       'device'
     ])
+  },
+  data() {
+    return {
+      dialogFormVisible: false,
+      textMap: {
+        'aboutTitle': '关于'
+      },
+      aboutTitle: 'aboutTitle'
+    }
   },
   methods: {
     toggleSideBar() {

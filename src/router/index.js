@@ -13,7 +13,7 @@ import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 import goodsRouter from "@/router/modules/goods";
 import customerRouter from "@/router/modules/customer";
-import userRouter from "@/router/modules/user";
+import userRouter from "@/router/modules/system";
 import orderRouter from "@/router/modules/order";
 import supplierRouter from "@/router/modules/supplier";
 

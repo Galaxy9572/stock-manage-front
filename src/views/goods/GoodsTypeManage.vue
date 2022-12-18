@@ -6,12 +6,9 @@
       </el-button>
     </div>
     <el-table
-      :header-cell-style="{background:'#409EFF',color:'#FFFFFF'}"
-      :data="list"
-      style="width: 1400px; margin: 0 auto"
-      row-key="id"
-      border
-      default-expand-all
+      stripe
+      :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
+      :data="list" style="width: 1400px; margin: 0 auto" row-key="id" border default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column fixed prop="typeName" label="类型名称" width="300px">
         <template slot-scope="{row}">

@@ -22,6 +22,7 @@
     </div>
 
     <el-table
+      stripe
       :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
               width="100%">
@@ -32,7 +33,7 @@
       </el-table-column>
       <el-table-column label="角色" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span><el-tag v-for="(role) in row.roles">{{ roleMap[role] }}</el-tag></span>
+          <span><el-tag style="margin: 0 5px" v-for="(role) in row.roles">{{ roleMap[role] }}</el-tag></span>
         </template>
       </el-table-column>
       <el-table-column label="备注" min-width="20%" align="center">
@@ -139,8 +140,8 @@
 <script>
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
-import Pagination from '@/components/Pagination'
-import {addUserInfo, deleteUserInfo, listAllUserRoles, listUserInfo, updateUserInfo} from "@/api/user"; // secondary package based on el-pagination
+import Pagination from '@/components/Pagination/index.vue'
+import {addUserInfo, deleteUserInfo, listAllUserRoles, listUserInfo, updateUserInfo} from "@/api/system"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',

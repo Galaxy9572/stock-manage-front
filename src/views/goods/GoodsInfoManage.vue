@@ -6,7 +6,6 @@
       <el-cascader class="filter-item" style="margin-right: 20px"
                    placeholder="请选择商品类型"
                    ref="goodsTypeCascader"
-                   :key="id"
                    v-model="listQuery.goodsTypeId"
                    clearable
                    :options="goodsTypes"
@@ -24,6 +23,7 @@
     </div>
 
     <el-table
+      stripe
       :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
               width="100%">
@@ -117,7 +117,6 @@
             <el-form-item label="商品类型" prop="goodsTypeId">
               <el-cascader placeholder="请选择商品类型"
                            ref="goodsTypeCascader"
-                           :key="id"
                            v-model="temp.goodsTypeId"
                            clearable
                            :options="goodsTypes"

@@ -6,7 +6,7 @@ const supplierRouter = {
   path: '/supplier',
   component: Layout,
   redirect: '/supplier/index',
-  name: '供应商管理',
+  name: 'SupplierManage',
   meta: {
     title: '供应商管理',
     icon: 'international'
@@ -15,10 +15,10 @@ const supplierRouter = {
     {
       path: 'supplier-info',
       component: () => import('@/views/supplier/SupplierInfoManage'),
-      name: '供应商管理',
+      name: 'SupplierInfoManage',
       meta: {
         title: '供应商管理',
-        roles: ['admin'] // or you can only set roles in sub nav
+        roles: ['admin', 'user'] // or you can only set roles in sub nav
       }
     }
   ]

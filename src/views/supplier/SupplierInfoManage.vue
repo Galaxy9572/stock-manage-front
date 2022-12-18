@@ -11,6 +11,7 @@
     </div>
 
     <el-table
+      stripe
       :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
       <el-table-column label="供应商名称" fixed prop="supplierName" align="center" width="300px">

@@ -11,6 +11,7 @@
     </div>
 
     <el-table
+      stripe
       :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 1600px; margin: 0 auto;">
       <el-table-column label="单位名称" prop="unitName" align="center" width="300px">
@@ -23,16 +24,16 @@
           <span><el-tag>{{ booleanMap[row.allowDecimal] }}</el-tag></span>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" width="200px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.createUser.userName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="修改人" width="200px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updateUser.userName }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="创建人" width="200px" align="center">-->
+<!--        <template slot-scope="{row}">-->
+<!--          <span>{{ row.createUser.userName }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="修改人" width="200px" align="center">-->
+<!--        <template slot-scope="{row}">-->
+<!--          <span>{{ row.updateUser.userName }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="创建时间" width="200px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>

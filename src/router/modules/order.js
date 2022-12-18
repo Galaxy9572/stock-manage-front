@@ -4,7 +4,7 @@ const orderRouter = {
   path: '/order',
   component: Layout,
   redirect: '/order/index',
-  name: '订单管理',
+  name: 'OrderManage',
   meta: {
     title: '订单管理',
     icon: 'money'
@@ -13,10 +13,10 @@ const orderRouter = {
     {
       path: 'dispatch-manage',
       component: () => import('@/views/order/OrderManage.vue'),
-      name: '订单管理',
+      name: 'OrderManage',
       meta: {
         title: '订单管理',
-        roles: ['admin']
+        roles: ['admin', 'user']
       }
     },
   ]
