@@ -141,7 +141,7 @@
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination/index.vue'
-import {addUserInfo, deleteUserInfo, listAllUserRoles, listUserInfo, updateUserInfo} from "@/api/system"; // secondary package based on el-pagination
+import {addUserInfo, deleteUserInfo, listAllUserRoles, listUserInfo, updateUserInfo} from "@/api/system/user"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',

@@ -257,10 +257,10 @@
 </template>
 
 <script>
-import {addModifySupplierInfo, deleteSupplierInfo, listSupplierInfo} from '@/api/supplier'
+import {addModifySupplierInfo, deleteSupplierInfo, listSupplierInfo} from '@/api/info/supplier'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination'
+import Pagination from '@/components/Pagination/index.vue'
 import {listRegions} from "@/api/region"; // secondary package based on el-pagination
 
 export default {

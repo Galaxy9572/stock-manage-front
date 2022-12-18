@@ -112,8 +112,7 @@ import {
   listAllOperationTypes,
   listAllSubModulesByModule,
   listOperationLogByPage,
-  listUserInfo
-} from "@/api/system";
+} from "@/api/system/operation-log";
 import * as DateUtils from '@/utils/date'// secondary package based on el-pagination
 
 export default {

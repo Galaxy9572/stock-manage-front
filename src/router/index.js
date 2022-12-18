@@ -12,10 +12,9 @@ import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 import goodsRouter from "@/router/modules/goods";
-import customerRouter from "@/router/modules/customer";
 import userRouter from "@/router/modules/system";
 import orderRouter from "@/router/modules/order";
-import supplierRouter from "@/router/modules/supplier";
+import infoRouter from "@/router/modules/info";
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -137,8 +136,7 @@ export const constantRoutes = [
 export const asyncRoutes = [
   goodsRouter,
   orderRouter,
-  customerRouter,
-  supplierRouter,
+  infoRouter,
   userRouter,
   // {
   //   path: '/permission',
