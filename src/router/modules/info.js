@@ -8,8 +8,8 @@ const infoRouter = {
   redirect: '/information/index',
   name: 'InformationManage',
   meta: {
-    title: '资料管理',
-    icon: 'peoples'
+    title: '信息管理',
+    icon: 'documentation'
   },
   children: [
     {
@@ -27,7 +27,27 @@ const infoRouter = {
       component: () => import('@/views/info/SupplierInfoManage.vue'),
       name: 'SupplierInfoManage',
       meta: {
-        title: '供应商管理',
+        title: '供应商信息管理',
+        icon: 'international',
+        roles: ['admin', 'user'] // or you can only set roles in sub nav
+      }
+    },
+    {
+      path: 'shop-info',
+      component: () => import('@/views/info/ShopInfoManage.vue'),
+      name: 'ShopInfoManage',
+      meta: {
+        title: '门店信息管理',
+        icon: 'peoples',
+        roles: ['admin', 'user'] // or you can only set roles in sub nav
+      }
+    },
+    {
+      path: 'warehouse-info',
+      component: () => import('@/views/info/WarehouseInfoManage.vue'),
+      name: 'WarehouseInfoManage',
+      meta: {
+        title: '仓库信息管理',
         icon: 'international',
         roles: ['admin', 'user'] // or you can only set roles in sub nav
       }
