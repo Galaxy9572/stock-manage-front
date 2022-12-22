@@ -38,7 +38,7 @@ const infoRouter = {
       name: 'ShopInfoManage',
       meta: {
         title: '门店信息管理',
-        icon: 'peoples',
+        icon: 'guide',
         roles: ['admin', 'user'] // or you can only set roles in sub nav
       }
     },
@@ -48,7 +48,7 @@ const infoRouter = {
       name: 'WarehouseInfoManage',
       meta: {
         title: '仓库信息管理',
-        icon: 'international',
+        icon: 'component',
         roles: ['admin', 'user'] // or you can only set roles in sub nav
       }
     }
