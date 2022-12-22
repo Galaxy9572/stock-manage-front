@@ -57,7 +57,7 @@
 
 <script>
 import CountTo from 'vue-count-to'
-import getDashboardStatistic from "@/api/dashboard";
+import getDashboardStatistic from "@/api/dashboard/dashboard";
 
 export default {
   components: {

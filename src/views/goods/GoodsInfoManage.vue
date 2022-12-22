@@ -64,12 +64,12 @@
       </el-table-column>
       <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.createUser.userName }}</span>
+          <span>{{ row.createUser? row.createUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.updateUser.userName }}</span>
+          <span>{{ row.updateUser? row.updateUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" width="200px">
@@ -216,8 +216,11 @@
 import {
   listGoodsInfo,
   addModifyGoodsInfo,
-  deleteGoodsInfo, listGoodsTypes, listGoodsUnit, modifyGoodsStockWarning
-} from '@/api/goods'
+  deleteGoodsInfo
+} from '@/api/goods/goods-info'
+import { listGoodsTypes } from '@/api/goods/goods-type'
+import { listGoodsUnit } from '@/api/goods/goods-unit'
+import { modifyGoodsStockWarning } from '@/api/goods/goods-stock'
 import waves from '@/directive/waves'
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'

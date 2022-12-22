@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.keyword" placeholder="客户名称或联系人" style="width: 500px; margin-right: 20px"
+      <el-input v-model="listQuery.keyword" placeholder="请输入仓库名称或联系人" style="width: 500px; margin-right: 20px"
                 class="filter-item" @keyup.enter.native="doSearch"/>
       <el-button v-waves class="filter-item" style="margin-right: 10px" type="primary" icon="el-icon-search"
                  @click="doSearch">
         搜索
       </el-button>
       <el-button class="filter-item" type="success" icon="el-icon-plus" @click="openCreateDialog">
-        新增客户信息
+        新增仓库信息
       </el-button>
     </div>
 
@@ -16,9 +16,9 @@
       stripe
       :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row width="1200px">
-      <el-table-column label="客户名称" fixed prop="customerName" align="center" width="300px">
+      <el-table-column label="仓库名称" fixed prop="warehouseName" align="center" width="300px">
         <template slot-scope="{row}">
-          <span>{{ row.customerName }}</span>
+          <span>{{ row.warehouseName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="联系人" prop="contactPerson" align="center" width="150px">
@@ -58,12 +58,12 @@
       </el-table-column>
       <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.createUser.userName }}</span>
+          <span>{{ row.createUser? row.createUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.updateUser.userName }}</span>
+          <span>{{ row.updateUser? row.updateUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="200px" align="center">
@@ -77,7 +77,7 @@
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" align="center" width="250px" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+        <template slot-scope="{row}">
           <el-button type="primary" size="mini" icon="el-icon-more" @click="handleUpdate(row)">
             详情
           </el-button>
@@ -101,14 +101,9 @@
         <el-divider>基本信息</el-divider>
 
         <el-row>
-          <el-col :span="14">
-            <el-form-item label="客户名称" prop="customerName">
-              <el-input v-model="temp.customerName"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="联系人" prop="contactPerson">
-              <el-input v-model="temp.contactPerson"/>
+          <el-col :span="24">
+            <el-form-item label="仓库名称" prop="warehouseName">
+              <el-input v-model="temp.warehouseName"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -125,34 +120,13 @@
 
         <el-row>
           <el-col :span="12">
+            <el-form-item label="联系人" prop="contactPerson">
+              <el-input v-model="temp.contactPerson"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="联系电话" prop="phone">
               <el-input v-model="temp.phone"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="传真" prop="fax">
-              <el-input v-model="temp.fax"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="QQ" prop="qq">
-              <el-input v-model="temp.qq"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="微信" prop="wechat">
-              <el-input v-model="temp.wechat"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="电子邮箱" prop="email">
-              <el-input v-model="temp.email"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -248,35 +222,12 @@
           </el-col>
         </el-row>
 
-        <el-divider>银行信息</el-divider>
-
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="开户行" prop="bankName">
-              <el-input v-model="temp.bankName"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="银行卡号" prop="bankCardId">
-              <el-input v-model="temp.bankCardId"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="纳税人识别号" prop="taxpayerId">
-              <el-input v-model="temp.taxpayerId"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
-          <el-button type="primary" @click="dialogStatus==='create'?createCustomerInfo():updateData()">
+          <el-button type="primary" @click="dialogStatus==='create'?createWarehouseInfo():updateData()">
             确认
           </el-button>
       </span>
@@ -285,14 +236,14 @@
 </template>
 
 <script>
-import {addModifyCustomerInfo, deleteCustomerInfo, listCustomerInfo} from '@/api/info/customer'
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination/index.vue'
-import {listRegions} from "@/api/region"; // secondary package based on el-pagination
+import {listRegions} from "@/api/region/region";
+import {addModifyWarehouseInfo, deleteWarehouseInfo, listWarehouseInfo} from "@/api/info/warehouse"; // secondary package based on el-pagination
 
 export default {
-  name: 'CustomerInfoManage',
+  name: 'WarehouseInfoManage',
   components: {Pagination},
   directives: {waves},
   filters: {},
@@ -317,31 +268,21 @@ export default {
       regionList: [],
       temp: {
         id: undefined,
-        customerName: "",
+        warehouseName: "",
         contactPerson: "",
         phone: "",
-        email: "",
-        fax: "",
-        qq: "",
-        wechat: "",
         country: "",
         state: "",
         city: "",
         district: "",
         address: "",
-        postCode: "",
-        initAccountsReceivable: 0.00,
-        currentAccountsReceivable: 0.00,
-        memo: "",
-        bankName: "",
-        bankCardId: "",
-        taxpayerId: ""
+        postCode: ""
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑客户信息',
-        create: '新增客户信息'
+        update: '编辑仓库信息',
+        create: '新增仓库信息'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -404,10 +345,10 @@ export default {
           break
       }
     },
-    // 获取客户信息列表
+    // 获取仓库信息列表
     getList() {
       this.listLoading = true
-      listCustomerInfo(this.listQuery).then(response => {
+      listWarehouseInfo(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
@@ -429,25 +370,15 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        customerName: "",
+        warehouseName: "",
         contactPerson: "",
         phone: "",
-        email: "",
-        fax: "",
-        qq: "",
-        wechat: "",
         country: "",
         state: "",
         city: "",
         district: "",
         address: "",
-        postCode: "",
-        initAccountsReceivable: 0.00,
-        currentAccountsReceivable: 0.00,
-        memo: "",
-        bankName: "",
-        bankCardId: "",
-        taxpayerId: ""
+        postCode: ""
       }
     },
     // 打开新增面板
@@ -460,10 +391,10 @@ export default {
       })
     },
     // 发送新增请求
-    createCustomerInfo() {
+    createWarehouseInfo() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addModifyCustomerInfo(this.temp).then(() => {
+          addModifyWarehouseInfo(this.temp).then(() => {
             this.dialogFormVisible = false
             this.getList()
             this.$notify({
@@ -489,7 +420,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           console.log(tempData)
-          addModifyCustomerInfo(tempData).then(() => {
+          addModifyWarehouseInfo(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '提醒',
@@ -503,7 +434,7 @@ export default {
       })
     },
     handleDelete(id) {
-      deleteCustomerInfo(id).then(response => {
+      deleteWarehouseInfo(id).then(response => {
         this.$notify({
           title: '提醒',
           message: '操作成功',

@@ -14,26 +14,29 @@
       stripe
       :header-cell-style="{background: '#409EFF',color: '#FFFFFF'}"
       :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 1600px; margin: 0 auto;">
-      <el-table-column label="单位名称" prop="unitName" align="center" width="300px">
+      <el-table-column label="单位名称" fixed prop="unitName" align="center" width="300px">
         <template slot-scope="{row}">
           <span>{{ row.unitName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否允许小数" prop="allowDecimal" align="center" width="300px">
         <template slot-scope="{row}">
-          <span><el-tag>{{ booleanMap[row.allowDecimal] }}</el-tag></span>
+          <span>
+            <el-tag type="success" v-if="row.allowDecimal">{{ booleanMap[row.allowDecimal] }}</el-tag>
+            <el-tag type="danger" v-else-if="!row.allowDecimal">{{ booleanMap[row.allowDecimal] }}</el-tag>
+          </span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="创建人" width="200px" align="center">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.createUser.userName }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="修改人" width="200px" align="center">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.updateUser.userName }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="创建人" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.createUser? row.createUser.userName : ''}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改人" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateUser? row.updateUser.userName : '' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" width="200px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -44,8 +47,8 @@
           <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="199px" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+      <el-table-column label="操作" fixed="right" align="center" width="199px" class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
@@ -87,7 +90,7 @@
 </template>
 
 <script>
-import {listGoodsUnit, deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods'
+import {listGoodsUnit, deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods/goods-unit'
 import waves from '@/directive/waves'
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'

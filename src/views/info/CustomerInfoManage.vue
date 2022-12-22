@@ -58,12 +58,12 @@
       </el-table-column>
       <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.createUser.userName }}</span>
+          <span>{{ row.createUser? row.createUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.updateUser.userName }}</span>
+          <span>{{ row.updateUser? row.updateUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="200px" align="center">
@@ -289,7 +289,7 @@ import {addModifyCustomerInfo, deleteCustomerInfo, listCustomerInfo} from '@/api
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination/index.vue'
-import {listRegions} from "@/api/region"; // secondary package based on el-pagination
+import {listRegions} from "@/api/region/region"; // secondary package based on el-pagination
 
 export default {
   name: 'CustomerInfoManage',

@@ -135,8 +135,8 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   goodsRouter,
-  orderRouter,
   infoRouter,
+  orderRouter,
   userRouter,
   // {
   //   path: '/permission',
@@ -180,18 +180,18 @@ export const asyncRoutes = [
   //   ]
   // },
   //
-  {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/icons/index'),
-        name: 'Icons',
-        meta: { title: 'Icons', icon: 'icon', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/icon',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/icons/index'),
+  //       name: 'Icons',
+  //       meta: { title: 'Icons', icon: 'icon', noCache: true }
+  //     }
+  //   ]
+  // },
 
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,

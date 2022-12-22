@@ -12,23 +12,19 @@
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column fixed prop="typeName" label="类型名称" width="300px">
         <template slot-scope="{row}">
-          <el-tag
-            closable
-            @close="handleDelete(row.id)"
-            effect="dark"
-            color="rgb(0,191,183)">
+          <el-tag closable @close="handleDelete(row.id)">
             <span>{{ row.typeName }}</span>
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="创建人" prop="createUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.createUser.userName }}</span>
+          <span>{{ row.createUser? row.createUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" prop="updateUserName" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.updateUser.userName }}</span>
+          <span>{{ row.updateUser? row.updateUser.userName : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" width="200px">
@@ -77,7 +73,7 @@ import {
   addModifyGoodsType,
   deleteGoodsType,
   listGoodsTypes,
-} from "@/api/goods";
+} from "@/api/goods/goods-type";
 
 export default {
   name: "index",

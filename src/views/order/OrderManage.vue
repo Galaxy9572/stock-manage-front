@@ -128,12 +128,12 @@
 import {
   addModifyGoodsInfo,
   deleteGoodsInfo, listGoodsTypes
-} from '@/api/goods'
+} from '@/api/goods/goods-info'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import * as DateUtils from '@/utils/date'
 import Pagination from '@/components/Pagination'
-import {listAllOrderTypeList, listOrderRecordsByPage} from "@/api/order"; // secondary package based on el-pagination
+import {listAllOrderTypeList, listOrderRecordsByPage} from "@/api/order/order"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsInfoManage',
