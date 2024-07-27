@@ -43,7 +43,7 @@
       </el-table-column>
       <el-table-column label="创建时间" min-width="20%" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
@@ -141,7 +141,8 @@
 import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination/index.vue'
-import {addUserInfo, deleteUserInfo, listAllUserRoles, listUserInfo, updateUserInfo} from "@/api/system/user"; // secondary package based on el-pagination
+import {addUserInfo, deleteUserInfo, listAllUserRoles, listUserInfo, updateUserInfo} from "@/api/system/user";
+import {formatDateTime} from "../../utils/time-util"; // secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',
@@ -228,6 +229,7 @@ export default {
     this.getAllUserRoles()
   },
   methods: {
+    formatDateTime,
     // 获取所有角色
     getAllUserRoles() {
       listAllUserRoles(this.listQuery).then(response => {

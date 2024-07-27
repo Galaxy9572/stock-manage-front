@@ -19,7 +19,7 @@ const infoRouter = {
       meta: {
         title: '客户信息管理',
         icon: 'peoples',
-        roles: ['admin', 'user'] // or you can only set roles in sub nav
+        roles: ['ADMIN', 'USER'] // or you can only set roles in sub nav
       }
     },
     {
@@ -29,7 +29,7 @@ const infoRouter = {
       meta: {
         title: '供应商信息管理',
         icon: 'international',
-        roles: ['admin', 'user'] // or you can only set roles in sub nav
+        roles: ['ADMIN', 'USER'] // or you can only set roles in sub nav
       }
     },
     {
@@ -39,7 +39,7 @@ const infoRouter = {
       meta: {
         title: '门店信息管理',
         icon: 'guide',
-        roles: ['admin', 'user'] // or you can only set roles in sub nav
+        roles: ['ADMIN', 'USER'] // or you can only set roles in sub nav
       }
     },
     {
@@ -49,7 +49,7 @@ const infoRouter = {
       meta: {
         title: '仓库信息管理',
         icon: 'component',
-        roles: ['admin', 'user'] // or you can only set roles in sub nav
+        roles: ['ADMIN', 'USER'] // or you can only set roles in sub nav
       }
     }
   ]

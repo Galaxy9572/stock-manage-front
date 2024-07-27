@@ -68,12 +68,12 @@
       </el-table-column>
       <el-table-column label="创建时间" width="200px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" width="200px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.updateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" align="center" width="250px" class-name="small-padding fixed-width">
@@ -240,7 +240,8 @@ import waves from '@/directive/waves' // waves directive
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination/index.vue'
 import {listRegions} from "@/api/region/region";
-import {addModifyWarehouseInfo, deleteWarehouseInfo, listWarehouseInfo} from "@/api/info/warehouse"; // secondary package based on el-pagination
+import {addModifyWarehouseInfo, deleteWarehouseInfo, listWarehouseInfo} from "@/api/info/warehouse";
+import {formatDateTime} from "../../utils/time-util"; // secondary package based on el-pagination
 
 export default {
   name: 'WarehouseInfoManage',
@@ -296,6 +297,7 @@ export default {
     this.getList()
   },
   methods: {
+    formatDateTime,
     getRegionInfo(level) {
       this.regionQuery.level = level
       listRegions(this.regionQuery).then(response => {

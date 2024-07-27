@@ -39,12 +39,12 @@
       </el-table-column>
       <el-table-column label="创建时间" width="200px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" width="200px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.updateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" fixed="right" align="center" width="199px" class-name="small-padding fixed-width">
@@ -94,6 +94,7 @@ import {listGoodsUnit, deleteGoodsUnit, addModifyGoodsUnit} from '@/api/goods/go
 import waves from '@/directive/waves'
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
+import {formatDateTime} from "../../utils/time-util";
 
 export default {
   name: 'GoodsUnitManage',
@@ -144,6 +145,7 @@ export default {
     this.getList()
   },
   methods: {
+    formatDateTime,
     // 获取商品单位列表
     getList() {
       this.listLoading = true

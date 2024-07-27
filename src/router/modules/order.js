@@ -11,14 +11,23 @@ const orderRouter = {
   },
   children: [
     {
-      path: 'dispatch-manage',
-      component: () => import('@/views/order/OrderManage.vue'),
-      name: 'OrderManage',
+      path: 'dispatch-order-manage',
+      component: () => import('@/views/order/DispatchOrderManage.vue'),
+      name: 'DispatchOrderManage',
       meta: {
-        title: '订单管理',
-        roles: ['admin', 'user']
+        title: '发货订单管理',
+        roles: ['ADMIN', 'USER']
       }
     },
+    {
+      path: 'replenish-order-manage',
+      component: () => import('@/views/order/ReplenishOrderManage.vue'),
+      name: 'ReplenishOrderManage',
+      meta: {
+        title: '进货订单管理',
+        roles: ['ADMIN', 'USER']
+      }
+    }
   ]
 }
 export default orderRouter

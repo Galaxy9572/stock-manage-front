@@ -67,7 +67,17 @@
       </el-table-column>
       <el-table-column label="操作类型" prop="operationType" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.operationType }}</span>
+          <span>
+            <el-tag v-if="row.operationType === 'ADD'" type="success">
+              {{ row.operationTypeDesc }}
+            </el-tag>
+            <el-tag v-else-if="row.operationType === 'UPDATE'">
+              {{ row.operationTypeDesc }}
+            </el-tag>
+            <el-tag v-else-if="row.operationType === 'DELETE'" type="danger">
+              {{ row.operationTypeDesc }}
+            </el-tag>
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="操作描述" prop="operationDesc" align="center" width="400px">
@@ -92,7 +102,7 @@
       </el-table-column>
       <el-table-column label="操作时间" width="200px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.createTime) }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -113,7 +123,9 @@ import {
   listAllSubModulesByModule,
   listOperationLogByPage,
 } from "@/api/system/operation-log";
-import * as DateUtils from '@/utils/date'// secondary package based on el-pagination
+import * as DateUtils from '@/utils/date'
+import {formatDateTime} from "../../utils/time-util";
+// secondary package based on el-pagination
 
 export default {
   name: 'GoodsUnitManage',
@@ -190,6 +202,7 @@ export default {
     this.getAllOperationTypes()
   },
   methods: {
+    formatDateTime,
     getAllModules() {
       listAllModules().then(response => {
         this.allModules = response.data

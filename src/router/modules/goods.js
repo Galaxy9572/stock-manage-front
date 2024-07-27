@@ -19,7 +19,7 @@ const goodsRouter = {
       meta: {
         title: '商品信息管理',
         icon: 'list',
-        roles: ['admin', 'user']
+        roles: ['ADMIN', 'USER']
       }
     },
     {
@@ -29,7 +29,7 @@ const goodsRouter = {
       meta: {
         title: '库存告警管理',
         icon: 'chart',
-        roles: ['admin', 'user']
+        roles: ['ADMIN', 'USER']
       }
     },
     {
@@ -39,7 +39,7 @@ const goodsRouter = {
       meta: {
         title: '商品类型管理',
         icon: 'tree',
-        roles: ['admin', 'user']
+        roles: ['ADMIN', 'USER']
       }
     },
     {
@@ -49,7 +49,7 @@ const goodsRouter = {
       meta: {
         title: '商品计量单位管理',
         icon: 'tree-table',
-        roles: ['admin', 'user']
+        roles: ['ADMIN', 'USER']
       }
     },
   ]

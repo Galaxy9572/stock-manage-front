@@ -19,7 +19,7 @@ const userRouter = {
       meta: {
         title: '用户管理',
         icon: 'user',
-        roles: ['admin', 'user'] // or you can only set roles in sub nav
+        roles: ['ADMIN', 'USER'] // or you can only set roles in sub nav
       }
     },
     {
@@ -29,7 +29,7 @@ const userRouter = {
       meta: {
         title: '操作记录',
         icon: 'edit',
-        roles: ['admin', 'user'] // or you can only set roles in sub nav
+        roles: ['ADMIN', 'USER'] // or you can only set roles in sub nav
       }
     }
   ]

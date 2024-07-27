@@ -29,12 +29,12 @@
       </el-table-column>
       <el-table-column label="创建时间" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.updateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" align="center" width="249px" class-name="small-padding fixed-width">
@@ -74,6 +74,7 @@ import {
   deleteGoodsType,
   listGoodsTypes,
 } from "@/api/goods/goods-type";
+import {formatDateTime} from "../../utils/time-util";
 
 export default {
   name: "index",
@@ -105,6 +106,7 @@ export default {
     this.getList()
   },
   methods: {
+    formatDateTime,
     getList() {
       this.listLoading = true
       listGoodsTypes().then(response => {

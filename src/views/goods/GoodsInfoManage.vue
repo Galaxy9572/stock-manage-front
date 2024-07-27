@@ -74,12 +74,12 @@
       </el-table-column>
       <el-table-column label="创建时间" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" align="center" width="200px">
         <template slot-scope="{row}">
-          <span>{{ row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatDateTime(row.updateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" fixed="right" align="center" width="300px" class-name="small-padding fixed-width">
@@ -225,6 +225,7 @@ import waves from '@/directive/waves'
 import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination'
 import Link from "@/layout/components/Sidebar/Link.vue";
+import {formatDateTime} from "@/utils/time-util";
 
 export default {
   name: 'GoodsInfoManage',
@@ -310,6 +311,7 @@ export default {
     this.getGoodsUnitList()
   },
   methods: {
+    formatDateTime,
     // 获取商品信息列表
     getList() {
       this.listLoading = true
